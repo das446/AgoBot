@@ -1,10 +1,25 @@
-  File "discordbot.py", line 17
-    async def ShowEvents(self,ctx):
-        ^
+Traceback (most recent call last):
+  File "discordbot.py", line 10, in <module>
+    import fb
+  File "/home2/home-d/das446/AgoBot/fb.py", line 32
+    html = GetHtml()
+       ^
 SyntaxError: invalid syntax
 Traceback (most recent call last):
-  File "discordbot.py", line 57, in <module>
-    client.run(config['Defeault']['key'])
+  File "discordbot.py", line 107, in <module>
+    client.run(config[environment]['key'])
   File "/usr/lib/python3.6/configparser.py", line 959, in __getitem__
     raise KeyError(key)
-KeyError: 'Defeault'
+KeyError: 'environ'
+Traceback (most recent call last):
+  File "discordbot.py", line 107, in <module>
+    client.run(config[environment]['key'])
+  File "/usr/lib/python3.6/configparser.py", line 959, in __getitem__
+    raise KeyError(key)
+KeyError: 'dev'
+Traceback (most recent call last):
+  File "discordbot.py", line 107, in <module>
+    client.run(config[environment]['key'])
+  File "/usr/lib/python3.6/configparser.py", line 1233, in __getitem__
+    raise KeyError(key)
+KeyError: 'key'

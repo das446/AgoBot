@@ -6,17 +6,18 @@ import sys
 from discord.ext import commands
 import configparser
 from datetime import datetime
+from security import is_admin_channel
 
 
 class General(commands.Cog):
 
     @commands.command(name="stop", help='Stop the bot. (Admin only)')
-    @commands.check(settings.is_admin_channel)
+    @commands.check(is_admin_channel)
     async def Stop(self, ctx):
         print(type(ctx))
-        channel = client.get_channel(main_channel)
+        channel = self.client.get_channel(self.settings.main_channel)
         await channel.sendBlock('AGO Bot will be down for maintenance')
-        await client.logout()
+        await self.client.logout()
 
     @commands.command(name='events', help='Show upcoming events.')
     async def ShowEvents(self, ctx):
@@ -33,7 +34,7 @@ class General(commands.Cog):
         with open('info.txt') as info:
             message = info.read()
             now = datetime.now()
-            uptime = now - start_time
+            uptime = now - self.settings.start_time
             message = message + "Current Uptime: " + str(uptime)
             await ctx.sendBlock(message)
 
@@ -52,4 +53,6 @@ class General(commands.Cog):
         f.write(arg)
         await ctx.sendBlock("Updated schedule")
 
-
+    def __init__(self, s, c):
+        self.settings = s
+        self.client = c

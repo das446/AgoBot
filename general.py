@@ -6,13 +6,13 @@ import sys
 from discord.ext import commands
 import configparser
 from datetime import datetime
-from security import is_admin_channel
+from security import is_admin_channel, is_in_channel
 
 
 class General(commands.Cog):
 
-    @commands.command(name="stop", help='Stop the bot. (Admin only)')
-    @commands.check(is_admin_channel)
+    @commands.command(name="stop", help='Stop the bot.')
+    @is_in_channel(["testground"])
     async def Stop(self, ctx):
         print(type(ctx))
         channel = self.client.get_channel(self.settings.main_channel)
@@ -45,13 +45,28 @@ class General(commands.Cog):
 
     @commands.command(
         name='schedule-update',
-        help='Update the schedule, (Admins only, wrap it with double quotes)')
+        help='Update the schedule')
     @commands.check(is_admin_channel)
     async def UpdateSchedule(self, ctx, arg):
         channel = ctx.channel
         f = open("schedule.txt", "w+")
         f.write(arg)
         await ctx.sendBlock("Updated schedule")
+
+	@commands.command(
+    name="channel-ids",
+     help="list the channel ids, which is needed for other commands")
+	@commands.check(is_admin_channel)
+	async def ChannelIds(ctx):
+		s = self.settings.settings
+		msg = "general=" + s["channel_general"] + "\n"+
+			    "anime=" + s["channel_anime"] + "\n"+
+ 			  	"rpg="+s["channel_rpg"]+"\n"+
+ 				"videogames="+s["channel_videogames"]+"\n"+
+ 				"boardgames="+s["channel_boardgames"]+"\n"+
+ 				"cardgames="+s["channel_cardgames"]+"\n"+
+ 				"cosplay="+s["channel_cosplay"]+"\n"
+		ctx.sendBlock(msg)
 
     def __init__(self, s, c):
         self.settings = s

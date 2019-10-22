@@ -7,6 +7,7 @@ from discord.ext import commands
 import configparser
 from datetime import datetime
 import general
+#import poll
 
 client = commands.Bot(command_prefix='$')
 
@@ -35,18 +36,23 @@ class Settings():
 
         self.main_channel = int(self.settings["channel_main"])
         self.admin_channel_name = self.settings["channel_admin_name"]
+		self.server = self.settings["server"]
         self.key = self.settings["key"]
 
 
 settings = Settings()
 
 
+def GetChannelByName(channel_name):
+	server = client.get_server(settings.server)
+	for channel in server.channels:
+		if channel.name == channel_name:
+			return channel
+
 @client.event
 async def on_ready():
     channel = client.get_channel(settings.main_channel)
-    print(type(channel))
     await channel.sendBlock("AGO Bot is operational.\nType $help to view available commands")
-
 
 async def loop():
     running = True
@@ -63,11 +69,11 @@ async def loop():
 g = general.General(settings,client)
 
 client.add_cog(g)
+# client.add_cog(poll.Polls(settings))
 # client.add_cog(BotCommands.stream.Twitch())
 # client.add_cog(BotCommands.insta.Instagram())
 
-
-if settings.environment == settings.prod:
-    client.loop.create_task(loop())
+#if settings.environment == settings.prod:
+#    client.loop.create_task(loop())
 
 client.run(settings.key)

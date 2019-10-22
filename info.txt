@@ -3,3 +3,4 @@ Created by David Saks. For any problems/questions/suggestions message nintendavi
 Current version: 0.0.1
 Planned Upcoming features:
 Auto post announcements from Facebook
+Polls

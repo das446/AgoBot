@@ -36,7 +36,7 @@ class Settings():
 
         self.main_channel = int(self.settings["channel_main"])
         self.admin_channel_name = self.settings["channel_admin_name"]
-		self.server = self.settings["server"]
+        self.server = self.settings["server"]
         self.key = self.settings["key"]
 
 
@@ -44,15 +44,24 @@ settings = Settings()
 
 
 def GetChannelByName(channel_name):
-	server = client.get_server(settings.server)
-	for channel in server.channels:
-		if channel.name == channel_name:
-			return channel
+    server = client.get_server(settings.server)
+    for channel in server.channels:
+        if channel.name == channel_name:
+            return channel
+
 
 @client.event
 async def on_ready():
     channel = client.get_channel(settings.main_channel)
     await channel.sendBlock("AGO Bot is operational.\nType $help to view available commands")
+
+
+@client.check
+async def restrict_to_dev(ctx):
+    if settings.environment == "dev":
+        return str(ctx.channel) == "testground"
+    return True
+
 
 async def loop():
     running = True
@@ -66,14 +75,14 @@ async def loop():
             for channel in channels:
                 channel.send(post)
 
-g = general.General(settings,client)
+g = general.General(settings, client)
 
 client.add_cog(g)
 # client.add_cog(poll.Polls(settings))
 # client.add_cog(BotCommands.stream.Twitch())
 # client.add_cog(BotCommands.insta.Instagram())
 
-#if settings.environment == settings.prod:
+# if settings.environment == settings.prod:
 #    client.loop.create_task(loop())
 
 client.run(settings.key)

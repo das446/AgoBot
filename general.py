@@ -53,20 +53,20 @@ class General(commands.Cog):
         f.write(arg)
         await ctx.sendBlock("Updated schedule")
 
-	@commands.command(
-    name="channel-ids",
-     help="list the channel ids, which is needed for other commands")
-	@commands.check(is_admin_channel)
-	async def ChannelIds(ctx):
-		s = self.settings.settings
-		msg = "general=" + s["channel_general"] + "\n"+
-			    "anime=" + s["channel_anime"] + "\n"+
- 			  	"rpg="+s["channel_rpg"]+"\n"+
- 				"videogames="+s["channel_videogames"]+"\n"+
- 				"boardgames="+s["channel_boardgames"]+"\n"+
- 				"cardgames="+s["channel_cardgames"]+"\n"+
- 				"cosplay="+s["channel_cosplay"]+"\n"
-		ctx.sendBlock(msg)
+        @commands.command(
+            name="channel-ids",
+            help="list the channel ids, which is needed for other commands")
+        @commands.check(is_admin_channel)
+        async def ChannelIds(ctx):
+            s = self.settings.settings
+            msg = "general=" + s["channel_general"] + "\n"+
+            "anime=" + s["channel_anime"] + "\n"+
+            "rpg=" + s["channel_rpg"] + "\n"+
+            "videogames=" + s["channel_videogames"] + "\n"+
+            "boardgames=" + s["channel_boardgames"] + "\n"+
+            "cardgames=" + s["channel_cardgames"] + "\n"+
+            "cosplay=" + s["channel_cosplay"] + "\n"
+            ctx.sendBlock(msg)
 
     def __init__(self, s, c):
         self.settings = s

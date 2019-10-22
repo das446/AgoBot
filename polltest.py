@@ -11,6 +11,7 @@ SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 
 # The ID and range of a sample spreadsheet.
 
+
 def main():
     """Shows basic usage of the Sheets API.
     Prints values from a sample spreadsheet.
@@ -35,11 +36,12 @@ def main():
             pickle.dump(creds, token)
 
     service = build('sheets', 'v4', credentials=creds)
-	service = discovery.build('sheets', 'v4', credentials=credentials)
-	body = {}
+    service = discovery.build('sheets', 'v4', credentials=credentials)
+    body = {}
 
-	request = service.spreadsheets().create(body=body)
-	response = request.execute()
+    request = service.spreadsheets().create(body=body)
+    response = request.execute()
+
 
 if __name__ == '__main__':
     main()

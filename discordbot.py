@@ -7,7 +7,12 @@ from discord.ext import commands
 import configparser
 from datetime import datetime
 import general
-#import poll
+import poll
+import traceback
+import io
+from security import Error
+
+print("Program started")
 
 client = commands.Bot(command_prefix='$')
 
@@ -15,7 +20,7 @@ running = False
 
 
 async def sendBlock(self, s):
-    await self.send('```' + s + '```')
+    return await self.send('```' + s + '```')
 
 discord.channel.TextChannel.sendBlock = sendBlock
 commands.context.Context.sendBlock = sendBlock
@@ -35,32 +40,42 @@ class Settings():
         self.settings = self.config[self.environment]
 
         self.main_channel = int(self.settings["channel_main"])
+        self.admin_channel = int(self.settings["channel_admin"])
         self.admin_channel_name = self.settings["channel_admin_name"]
         self.server = self.settings["server"]
         self.key = self.settings["key"]
+        self.bot = self.settings["bot_id"]
 
 
 settings = Settings()
 
 
-def GetChannelByName(channel_name):
-    server = client.get_server(settings.server)
-    for channel in server.channels:
-        if channel.name == channel_name:
-            return channel
-
-
 @client.event
 async def on_ready():
-    channel = client.get_channel(settings.main_channel)
-    await channel.sendBlock("AGO Bot is operational.\nType $help to view available commands")
+    print("Bot started")
+    if len(sys.argv) > 2:
+        channel = client.get_channel(settings.main_channel)
+        await channel.sendBlock("AGO Bot is operational.\nType $help to view available commands")
 
 
 @client.check
 async def restrict_to_dev(ctx):
     if settings.environment == "dev":
         return str(ctx.channel) == "testground"
-    return True
+    if settings.environment == "prod":
+        return str(ctx.channel) != "testground"
+
+
+@client.event
+async def on_command_error(ctx, error):
+    if hasattr(error.original,"handled"):
+        await ctx.sendBlock(str(error.original))
+    else:       
+        stream = io.StringIO()
+        traceback.print_tb(error.original.__traceback__, file=stream)
+        error_msg = stream.getvalue()
+        await ctx.sendBlock("An error occured, please alert a server admin.")
+        await client.get_channel(settings.admin_channel).sendBlock(str(error) + "\n" + str(error_msg))
 
 
 async def loop():
@@ -78,7 +93,7 @@ async def loop():
 g = general.General(settings, client)
 
 client.add_cog(g)
-# client.add_cog(poll.Polls(settings))
+client.add_cog(poll.Polls(settings, client))
 # client.add_cog(BotCommands.stream.Twitch())
 # client.add_cog(BotCommands.insta.Instagram())
 

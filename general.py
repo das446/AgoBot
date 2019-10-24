@@ -11,12 +11,12 @@ from security import is_admin_channel, is_in_channel
 
 class General(commands.Cog):
 
-    @commands.command(name="stop", help='Stop the bot.')
-    @is_in_channel(["testground"])
-    async def Stop(self, ctx):
-        print(type(ctx))
+    @commands.command(name="stop", help='Stop the bot')
+    @commands.check(is_admin_channel)
+    async def Stop(self, ctx, *msg):
         channel = self.client.get_channel(self.settings.main_channel)
-        await channel.sendBlock('AGO Bot will be down for maintenance')
+        if len(msg) > 0:
+            await channel.sendBlock('AGO Bot will be down for maintenance')
         await self.client.logout()
 
     @commands.command(name='events', help='Show upcoming events.')
@@ -59,13 +59,13 @@ class General(commands.Cog):
         @commands.check(is_admin_channel)
         async def ChannelIds(ctx):
             s = self.settings.settings
-            msg = "general=" + s["channel_general"] + "\n"+
-            "anime=" + s["channel_anime"] + "\n"+
-            "rpg=" + s["channel_rpg"] + "\n"+
-            "videogames=" + s["channel_videogames"] + "\n"+
-            "boardgames=" + s["channel_boardgames"] + "\n"+
-            "cardgames=" + s["channel_cardgames"] + "\n"+
-            "cosplay=" + s["channel_cosplay"] + "\n"
+            msg = ("general=" + s["channel_general"] + "\n" +
+                   "anime=" + s["channel_anime"] + "\n" +
+                   "rpg=" + s["channel_rpg"] + "\n" +
+                   "videogames=" + s["channel_videogames"] + "\n" +
+                   "boardgames=" + s["channel_boardgames"] + "\n" +
+                   "cardgames=" + s["channel_cardgames"] + "\n" +
+                   "cosplay=" + s["channel_cosplay"] + "\n")
             ctx.sendBlock(msg)
 
     def __init__(self, s, c):

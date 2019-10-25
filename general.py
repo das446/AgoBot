@@ -21,7 +21,7 @@ class General(commands.Cog):
 
     @commands.command(name='events', help='Show upcoming events.')
     async def ShowEvents(self, ctx):
-        with open(os.path.join('files','events.csv'), newline='') as csvfile:
+        with open(os.path.join('files','events.txt'), newline='') as csvfile:
             reader = csv.reader(csvfile, delimiter='|')
             msg = ""
             for row in reader:
@@ -31,7 +31,7 @@ class General(commands.Cog):
 
     @commands.command(name='info', help='Show info about the bot')
     async def Info(self, ctx):
-        with open(os.path.join('files','info.txt') as info:
+        with open(os.path.join('files','info.txt')) as info:
             message = info.read()
             now = datetime.now()
             uptime = now - self.settings.start_time

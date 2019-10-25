@@ -62,14 +62,13 @@ async def on_ready():
 #handle files
 @client.event
 async def on_message(message):
-    if message.author == client.user or str(message.channel) != settings.admin_channel_name:
-        return
-    if len(message.attachments) > 0:
+    if message.author != client.user and str(message.channel) == settings.admin_channel_name and len(message.attachments) > 0:
         attachment = message.attachments[0]
         filename = attachment.filename
         if filename.endswith('.txt'):
             await attachment.save(os.pat.join("files",filename))
             await message.channel.sendBlock("Updated file "+filename)
+    await client.process_commands(message)
 
 @client.check
 async def restrict_to_dev(ctx):

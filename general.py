@@ -14,12 +14,14 @@ class General(commands.Cog):
     @commands.command(name="stop", help='Stop the bot')
     @commands.check(is_admin_channel)
     async def Stop(self, ctx, *msg):
+        """Stops the bot"""
         channel = self.client.get_channel(self.settings.main_channel)
         if len(msg) > 0:
             await channel.sendBlock('AGO Bot will be down for maintenance')
         await self.client.logout()
 
     @commands.command(name='events', help='Show upcoming events.')
+        """Shows upcoming events by reading files/events.txt"""
     async def ShowEvents(self, ctx):
         with open(os.path.join('files','events.txt'), newline='') as csvfile:
             reader = csv.reader(csvfile, delimiter='|')
@@ -31,6 +33,7 @@ class General(commands.Cog):
 
     @commands.command(name='info', help='Show info about the bot')
     async def Info(self, ctx):
+        """Shows info about the bot by reading files/info.txt"""
         with open(os.path.join('files','info.txt')) as info:
             message = info.read()
             now = datetime.now()
@@ -40,6 +43,7 @@ class General(commands.Cog):
 
     @commands.command(name='schedule', help='Show weekly schedule')
     async def ShowSchedule(self, ctx):
+        """Shows the weekly schedule by reading files/schedule.txt"""
         with open(os.path.join("files",'schedule.txt')) as schedule:
             await ctx.sendBlock(schedule.read())
 

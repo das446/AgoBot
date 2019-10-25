@@ -17,6 +17,7 @@ import os
 
 
 def GetCredentials():
+    """Read client_secret.json to gain permissions to access Google Sheets API"""
     scope = [
         'https://www.googleapis.com/auth/spreadsheets',
         'https://www.googleapis.com/auth/drive',
@@ -73,6 +74,7 @@ class Poll():
         return sheet
 
     def url(self):
+        "It is easier to store just the id and generate the url dynamicly"
         return "https://docs.google.com/spreadsheets/d/%s" % self.id
 
     def SaveToFile(self):
@@ -116,6 +118,7 @@ class Poll():
                 x = x + 1
 
     def Votes(self,index):
+        """Returns a poll's votes for a given option index."""
         sheet = self.GetSheet().get_worksheet(0)
         row = sheet.row_values(index+1)
         return row[1:]
@@ -148,6 +151,7 @@ class Polls(commands.Cog):
     @commands.command(name="poll-new", help="Create a new poll")
     @commands.check(is_admin_channel)
     async def CreatePoll(self, ctx, channel_name, name, *options):
+        """Create a new poll."""
         channel = self.client.GetChannelByName(channel_name)
         choices = options[0].split(',')
         new_poll = Poll(

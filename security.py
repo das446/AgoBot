@@ -14,6 +14,7 @@ async def DevOnly(ctx):
 
 
 async def is_admin_channel(ctx):
+    """Returns whether the context's channel is an admin channel"""
     return str(ctx.channel) in ["testground", "mods-are-gods"]
 
 

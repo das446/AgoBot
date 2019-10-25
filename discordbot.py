@@ -54,6 +54,7 @@ settings = Settings()
 
 @client.event
 async def on_ready():
+    """Called when the bot starts."""
     print("Bot started")
     if len(sys.argv) > 2:
         channel = client.get_channel(settings.main_channel)
@@ -62,6 +63,7 @@ async def on_ready():
 #handle files
 @client.event
 async def on_message(message):
+    """Used to update files that other commands read"""
     if message.author != client.user and str(message.channel) == settings.admin_channel_name and len(message.attachments) > 0:
         attachment = message.attachments[0]
         filename = attachment.filename
@@ -72,6 +74,7 @@ async def on_message(message):
 
 @client.check
 async def restrict_to_dev(ctx):
+    """Allows a dev and production version of the bot to be running at the same time without interference"""
     if settings.environment == "dev":
         return str(ctx.channel) == "testground"
     if settings.environment == "prod":
@@ -80,6 +83,7 @@ async def restrict_to_dev(ctx):
 
 @client.event
 async def on_command_error(ctx, error):
+    """Displays a friendly error message to the user, and a detailed error message to mods if needed"""
     if hasattr(error.original,"handled"):
         await ctx.sendBlock(str(error.original))
     else:       
@@ -91,6 +95,7 @@ async def on_command_error(ctx, error):
 
 
 async def loop():
+    """Polls FaceBook and other sources"""
     running = True
     await client.wait_until_ready()
     channel = client.get_channel(test_channel)

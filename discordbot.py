@@ -16,7 +16,7 @@ print("Program started")
 
 client = commands.Bot(command_prefix='$')
 
-commands.Bot.GetChannelByName =  GetChannelByName
+commands.Bot.GetChannelByName = GetChannelByName
 
 running = False
 
@@ -60,17 +60,20 @@ async def on_ready():
         channel = client.get_channel(settings.main_channel)
         await channel.sendBlock("AGO Bot is operational.\nType $help to view available commands")
 
-#handle files
+# handle files
 @client.event
 async def on_message(message):
     """Used to update files that other commands read"""
-    if message.author != client.user and str(message.channel) == settings.admin_channel_name and len(message.attachments) > 0:
+    if message.author != client.user and str(
+            message.channel) == settings.admin_channel_name and len(
+            message.attachments) > 0:
         attachment = message.attachments[0]
         filename = attachment.filename
         if filename.endswith('.txt'):
-            await attachment.save(os.pat.join("files",filename))
-            await message.channel.sendBlock("Updated file "+filename)
+            await attachment.save(os.pat.join("files", filename))
+            await message.channel.sendBlock("Updated file " + filename)
     await client.process_commands(message)
+
 
 @client.check
 async def restrict_to_dev(ctx):
@@ -84,9 +87,9 @@ async def restrict_to_dev(ctx):
 @client.event
 async def on_command_error(ctx, error):
     """Displays a friendly error message to the user, and a detailed error message to mods if needed"""
-    if hasattr(error.original,"handled"):
+    if hasattr(error.original, "handled"):
         await ctx.sendBlock(str(error.original))
-    else:       
+    else:
         stream = io.StringIO()
         traceback.print_tb(error.original.__traceback__, file=stream)
         error_msg = stream.getvalue()

@@ -68,9 +68,10 @@ class Poll():
         self.id = sheet.id
         self.SaveToFile()
         worksheet = sheet.get_worksheet(0)
-        for x in range(1, len(self.options)+1):
+        for x in range(1, len(self.options) + 1):
             worksheet.update_cell(x, 1, self.options[x - 1].strip())
         sheet.share('nintendavid26@aol.com', perm_type='user', role='owner')
+        #sheet.share('', perm_type='user', role='writer')
         return sheet
 
     def url(self):
@@ -91,9 +92,9 @@ class Poll():
             ",".join(self.options)
         )
         f.close()
-    
+
     def AddVote(self, choice, user):
-        if len(choice) > 1 :
+        if len(choice) > 1:
             raise Error("Enter one letter as your vote")
         choice = choice.upper()
         index = ord(choice) - 65
@@ -101,8 +102,9 @@ class Poll():
             raise Error("Invalid option")
         sheet = self.GetSheet().get_worksheet(0)
         matches = sheet.findall(user)
-        if len(matches)>=self.maxVotesPerPerson:
-            raise Error("You've already voted the max amount of times. You may contact an admin to change your vote.")
+        if len(matches) >= self.maxVotesPerPerson:
+            raise Error(
+                "You've already voted the max amount of times. You may contact an admin to change your vote.")
         empty = True
         x = 1
         while empty:
@@ -111,29 +113,30 @@ class Poll():
                 sheet.update_cell(index + 1, x, user)
                 empty = False
             elif cell == user:
-                raise Error("You already voted for that option. You may contact an admin to change your vote.")
+                raise Error(
+                    "You already voted for that option. You may contact an admin to change your vote.")
             elif cell == "XXXXXX":
                 raise Error("Sorry, that option is full")
             else:
                 x = x + 1
 
-    def Votes(self,index):
+    def Votes(self, index):
         """Returns a poll's votes for a given option index."""
         sheet = self.GetSheet().get_worksheet(0)
-        row = sheet.row_values(index+1)
+        row = sheet.row_values(index + 1)
         return row[1:]
- 
-    def AddOption(self,option):
+
+    def AddOption(self, option):
         self.options.append(option)
-        self.GetSheet().get_worksheet(0).update_cell(len(self.options),1,option)
+        self.GetSheet().get_worksheet(0).update_cell(len(self.options), 1, option)
         self.SaveToFile()
 
 
 def GetPoll(channel):
-    path = "polls/"+channel+".csv"
+    path = "polls/" + channel + ".csv"
     if not os.path.exists(path):
         raise Error("No poll in this channel")
-    f = open(path,"r")
+    f = open(path, "r")
     details = f.read().split(',')
     f.close()
     name = details[0]
@@ -141,6 +144,7 @@ def GetPoll(channel):
     poll = Poll(name=name, channel=channel, key=key)
     poll.options = details[4:]
     return poll
+
 
 class Polls(commands.Cog):
 
@@ -169,7 +173,7 @@ class Polls(commands.Cog):
                 str(i) + ': ' + option + "\n"
             i = chr(ord(i[0]) + 1)
         channel_message = channel_message + "Vote with $vote choice"
-        
+
         pins = await channel.pins()
         for pin in pins:
             if str(pin.author) == self.settings.bot:
@@ -182,7 +186,7 @@ class Polls(commands.Cog):
         name="poll-option",
         help="Add a new option to the poll")
     @commands.check(is_admin_channel)
-    async def AddOption(self,ctx,channel,option):
+    async def AddOption(self, ctx, channel, option):
         poll = GetPoll(channel)
         poll.AddOption(option)
         await ctx.sendBlock("Added option")
@@ -195,20 +199,20 @@ class Polls(commands.Cog):
         channel = str(ctx.channel)
         poll = GetPoll(channel)
         poll.AddVote(choice, user)
-        await ctx.sendBlock("Thank's for voting "+user+"!")
+        await ctx.sendBlock("Thank's for voting " + user + "!")
 
     @commands.command(
         name="poll",
         help="Show info about the channel's current poll")
-    async def PollInfo(self,ctx):
+    async def PollInfo(self, ctx):
         channel = str(ctx.channel)
         poll = GetPoll(channel)
         i = 'A'
         msg = poll.name + "\n"
         for option in poll.options:
-            i_int = ord(i[0])-65
+            i_int = ord(i[0]) - 65
             votes = str(len(poll.Votes(i_int)))
-            msg = msg + str(i)+": "+option+"   Votes=" + votes +"\n"
-            i = chr(ord(i[0])+1) 
+            msg = msg + str(i) + ": " + option + "   Votes=" + votes + "\n"
+            i = chr(ord(i[0]) + 1)
         msg = msg + "Vote with $vote choice"
-        await ctx.sendBlock(msg) 
+        await ctx.sendBlock(msg)

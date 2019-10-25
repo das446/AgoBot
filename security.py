@@ -5,12 +5,8 @@ dev = False
 
 class Error(Exception):
     def __init__(self, message):
-        self.message = "Handled: "+message
+        self.message = "Handled: " + message
         self.handled = True
-
-
-async def DevOnly(ctx):
-    return dev
 
 
 async def is_admin_channel(ctx):
@@ -23,7 +19,9 @@ def is_in_channel(channels):
         return str(ctx.channel) in channels
     return commands.check(predicate)
 
-#self=client
+# self=client
+
+
 def GetChannelByName(self, channel_name):
     channels = self.get_all_channels()
     for channel in channels:

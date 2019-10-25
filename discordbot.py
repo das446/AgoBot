@@ -10,11 +10,13 @@ import general
 import poll
 import traceback
 import io
-from security import Error
+from security import Error, GetChannelByName
 
 print("Program started")
 
 client = commands.Bot(command_prefix='$')
+
+commands.Bot.GetChannelByName =  GetChannelByName
 
 running = False
 
@@ -57,6 +59,17 @@ async def on_ready():
         channel = client.get_channel(settings.main_channel)
         await channel.sendBlock("AGO Bot is operational.\nType $help to view available commands")
 
+#handle files
+@client.event
+async def on_message(message):
+    if message.author == client.user or str(message.channel) != settings.admin_channel_name:
+        return
+    if len(message.attachments) > 0:
+        attachment = message.attachments[0]
+        filename = attachment.filename
+        if filename.endswith('.txt'):
+            await attachment.save(os.pat.join("files",filename))
+            await message.channel.sendBlock("Updated file "+filename)
 
 @client.check
 async def restrict_to_dev(ctx):

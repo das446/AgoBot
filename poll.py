@@ -148,7 +148,7 @@ class Polls(commands.Cog):
     @commands.command(name="poll-new", help="Create a new poll")
     @commands.check(is_admin_channel)
     async def CreatePoll(self, ctx, channel_name, name, *options):
-        channel = GetChannelByName(channel_name, self.settings, self.client)
+        channel = self.client.GetChannelByName(channel_name)
         choices = options[0].split(',')
         new_poll = Poll(
             channel=channel_name,

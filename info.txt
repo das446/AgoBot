@@ -1,6 +1,0 @@
-AGO's Official Discord Bot
-Created by David Saks. For any problems/questions/suggestions message nintendavid#0158. (There may be a delayed response during weekday business hours)
-Current version: 0.0.1
-Planned Upcoming features:
-Auto post announcements from Facebook
-Polls

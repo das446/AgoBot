@@ -22,9 +22,9 @@ def is_in_channel(channels):
         return str(ctx.channel) in channels
     return commands.check(predicate)
 
-
-def GetChannelByName(channel_name, settings, client):
-    channels = client.get_all_channels()
+#self=client
+def GetChannelByName(self, channel_name):
+    channels = self.get_all_channels()
     for channel in channels:
         if str(channel.name) == channel_name and str(channel.type) == "text":
             return channel

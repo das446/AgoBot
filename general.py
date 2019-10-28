@@ -51,3 +51,11 @@ class General(commands.Cog):
     def __init__(self, s, c):
         self.settings = s
         self.client = c
+
+    @commands.command(name="playing",help="Set the bot's activity status")
+    @commands.check(is_admin_channel)
+    async def SetPlaying(self, ctx, game_name):
+        game = discord.Game(name=game_name)
+        await self.client.change_presence(status = discord.Status.online,activity = game)
+        await ctx.sendBlock("Set status to "+game_name)
+    

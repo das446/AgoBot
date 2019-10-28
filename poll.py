@@ -15,6 +15,14 @@ from oauth2client.service_account import ServiceAccountCredentials
 import gspread
 import os
 
+def GetEmail(user):
+    # File format should be username#1234 - email@gmail.com
+    emails = open(os.path.join("files","mod-emails.txt"),"r").readlines()
+    for email in emails:
+        if email.startswith(user):
+            e = email.split(' - ')[1].strip()
+            return e
+    raise Error("Your Gmail was not found, please contact David")
 
 def GetCredentials():
     """Read client_secret.json to gain permissions to access Google Sheets API"""
@@ -38,11 +46,13 @@ class Poll():
         key="",
         maxVotesPerOption=0,
         maxVotesPerPerson=1,
+        creator = "",
         create=False,
             adminLocked=False):
         self.name = name
         self.options = options
         self.channel = channel
+        self.creator = GetEmail(creator)
         self.maxVotesPerOption = maxVotesPerOption
         self.maxVotesPerPerson = maxVotesPerPerson
         if create:
@@ -70,8 +80,9 @@ class Poll():
         worksheet = sheet.get_worksheet(0)
         for x in range(1, len(self.options) + 1):
             worksheet.update_cell(x, 1, self.options[x - 1].strip())
-        sheet.share('nintendavid26@aol.com', perm_type='user', role='owner')
-        #sheet.share('', perm_type='user', role='writer')
+        sheet.share(self.creator, perm_type='user', role='owner')
+        #sheet.share(self.creator, perm_type='user', role='owner')
+        
         return sheet
 
     def url(self):
@@ -130,6 +141,10 @@ class Poll():
         self.options.append(option)
         self.GetSheet().get_worksheet(0).update_cell(len(self.options), 1, option)
         self.SaveToFile()
+
+    def SetVotesPerPerson(self, amnt):
+        self.maxVotesPerPerson = amnt
+        self.SaveToFile()
         
 
 
@@ -142,7 +157,10 @@ def GetPoll(channel):
     f.close()
     name = details[0]
     key = details[1]
-    poll = Poll(name=name, channel=channel, key=key)
+    maxPerOption = int(details[2])
+    maxPerUser = int(details[3])
+    poll = Poll(name=name, channel=channel, key=key, maxVotesPerPerson = maxPerUser)
+    #TODO make it read from GSheet instead incase options change
     poll.options = details[4:]
     return poll
 
@@ -163,8 +181,9 @@ class Polls(commands.Cog):
             channel=channel_name,
             name=name,
             options=choices,
+            creator=str(ctx.message.author),
             create=True)
-        await ctx.sendBlock("New poll created. View it at " + new_poll.url() +"\nChange a cell to XXXXXX to max the amount of votes for that option")
+        await ctx.send("New poll created. View it at " + new_poll.url() + "\nChange a cell to XXXXXX to max the amount of votes for that option")
 
         channel_message = "New Poll: " + name + "\n"
         i = 'A'
@@ -202,7 +221,6 @@ class Polls(commands.Cog):
         poll = GetPoll(channel)
         poll.AddVote(choice, user)
         await processing.edit(content="```Thank's for voting " + user + "!```")
-
     @commands.command(
         name="poll",
         help="Show info about the channel's current poll")
@@ -219,10 +237,13 @@ class Polls(commands.Cog):
         msg = msg + "Vote with $vote choice"
         await ctx.sendBlock(msg)
 
-   # @commands.command(
-   #     name="poll-VotesPerPerson"
-   #     help="Sets the amount of votes one person can make (Enter 0 for unlimited). Defaults to one, does not change already made votes")
-   # @commands.check(is_admin_channel)
-   # async def SetVotesPerPerson(self, ctx, channel, amnt):
-   #     poll = GetPoll(channel)
-   #     poll.SetVotesPerPerson(amnt)
+    @commands.command(
+        name="poll-VotesPerPerson",
+        help="Sets the amount of votes one person can make (Enter 0 for unlimited). Defaults to 1, does not change already made votes")
+    @commands.check(is_admin_channel)
+    async def SetVotesPerPerson(self, ctx, channel, amnt):
+        poll = GetPoll(channel)
+        poll.SetVotesPerPerson(int(amnt))
+        if amnt == "0":
+            amnt="unlimited"
+        await ctx.sendBlock("Changed votes per person to " + amnt)

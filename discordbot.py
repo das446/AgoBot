@@ -70,7 +70,7 @@ async def on_message(message):
         attachment = message.attachments[0]
         filename = attachment.filename
         if filename.endswith('.txt'):
-            await attachment.save(os.pat.join("files", filename))
+            await attachment.save(os.path.join("files", filename))
             await message.channel.sendBlock("Updated file " + filename)
     await client.process_commands(message)
 

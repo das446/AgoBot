@@ -138,6 +138,10 @@ class Poll():
         self.options.append(option)
         self.GetSheet().get_worksheet(0).update_cell(len(self.options), 1, option)
         self.SaveToFile()
+
+    def SetVotesPerPerson(self, amnt):
+        self.maxVotesPerPerson = amnt
+        self.SaveToFile()
         
 
 
@@ -150,7 +154,8 @@ def GetPoll(channel):
     f.close()
     name = details[0]
     key = details[1]
-    poll = Poll(name=name, channel=channel, key=key)
+    votesPerPerson=int(details[3])
+    poll = Poll(name=name, channel=channel, key=key, maxVotesPerPerson=votesPerPerson)
     poll.options = details[4:]
     return poll
 
@@ -229,10 +234,10 @@ class Polls(commands.Cog):
         await ctx.sendBlock(msg)
 
     @commands.command(
-        name="poll-VotesPerPerson",
-        help="Sets the amount of votes one person can make (Enter 0 for unlimited). Defaults to one, does not change already made votes")
+        name="poll-vpp",
+        help="Votes Per Person. Sets the amount of votes one person can make (Enter 0 for unlimited). Defaults to one, does not change already made votes")
     @commands.check(is_admin_channel)
     async def SetVotesPerPerson(self, ctx, channel, amnt):
         poll = GetPoll(channel)
-        poll.SetVotesPerPerson(amnt)
-        ctx.sendBlock("updated vote limit")
+        poll.SetVotesPerPerson(int(amnt))
+        await ctx.sendBlock("updated vote limit")

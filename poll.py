@@ -95,14 +95,14 @@ class Poll():
 
     def AddVote(self, choice, user):
         if len(choice) > 1:
-            raise Error("Enter one letter as your vote")
+            raise Error("Enter one letter as your vote.")
         choice = choice.upper()
         index = ord(choice) - 65
         if index < 0 or index > len(self.options):
-            raise Error("Invalid option")
+            raise Error("Invalid option.")
         sheet = self.GetSheet().get_worksheet(0)
         matches = sheet.findall(user)
-        if len(matches) >= self.maxVotesPerPerson:
+        if len(matches) >= self.maxVotesPerPerson and self.maxVotesPerPerson != 0:
             raise Error(
                 "You've already voted the max amount of times. You may contact an admin to change your vote.")
         empty = True
@@ -130,6 +130,7 @@ class Poll():
         self.options.append(option)
         self.GetSheet().get_worksheet(0).update_cell(len(self.options), 1, option)
         self.SaveToFile()
+        
 
 
 def GetPoll(channel):
@@ -163,7 +164,7 @@ class Polls(commands.Cog):
             name=name,
             options=choices,
             create=True)
-        await ctx.sendBlock("New poll created. View it at " + new_poll.url())
+        await ctx.sendBlock("New poll created. View it at " + new_poll.url() +"\nChange a cell to XXXXXX to max the amount of votes for that option")
 
         channel_message = "New Poll: " + name + "\n"
         i = 'A'
@@ -195,11 +196,12 @@ class Polls(commands.Cog):
         name="vote",
         help="Vote on the current channel's pole")
     async def Vote(self, ctx, choice):
+        processing = await ctx.sendBlock("Processing your vote.")
         user = str(ctx.message.author)
         channel = str(ctx.channel)
         poll = GetPoll(channel)
         poll.AddVote(choice, user)
-        await ctx.sendBlock("Thank's for voting " + user + "!")
+        await processing.edit(content="```Thank's for voting " + user + "!```")
 
     @commands.command(
         name="poll",
@@ -216,3 +218,11 @@ class Polls(commands.Cog):
             i = chr(ord(i[0]) + 1)
         msg = msg + "Vote with $vote choice"
         await ctx.sendBlock(msg)
+
+   # @commands.command(
+   #     name="poll-VotesPerPerson"
+   #     help="Sets the amount of votes one person can make (Enter 0 for unlimited). Defaults to one, does not change already made votes")
+   # @commands.check(is_admin_channel)
+   # async def SetVotesPerPerson(self, ctx, channel, amnt):
+   #     poll = GetPoll(channel)
+   #     poll.SetVotesPerPerson(amnt)

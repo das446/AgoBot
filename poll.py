@@ -50,7 +50,7 @@ class Poll():
         create=False,
             adminLocked=False):
         self.name = name
-        self.owner = GetEmail(owner)
+        self.creator = GetEmail(creator)
         self.options = options
         self.channel = channel
         self.creator = GetEmail(creator)

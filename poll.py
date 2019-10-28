@@ -15,6 +15,12 @@ from oauth2client.service_account import ServiceAccountCredentials
 import gspread
 import os
 
+def GetEmail(user):
+    emails = open(os.path.join("files","mod-emails.txt"),"r").readlines()
+    for email in emails:
+        if email.startswith(user):
+            return email.split(' - ')[1].strip()
+    raise Error("Your email is not saved, please contact David")
 
 def GetCredentials():
     """Read client_secret.json to gain permissions to access Google Sheets API"""
@@ -38,9 +44,11 @@ class Poll():
         key="",
         maxVotesPerOption=0,
         maxVotesPerPerson=1,
+        owner="",
         create=False,
             adminLocked=False):
         self.name = name
+        self.owner = GetEmail(owner)
         self.options = options
         self.channel = channel
         self.maxVotesPerOption = maxVotesPerOption
@@ -70,7 +78,7 @@ class Poll():
         worksheet = sheet.get_worksheet(0)
         for x in range(1, len(self.options) + 1):
             worksheet.update_cell(x, 1, self.options[x - 1].strip())
-        sheet.share('nintendavid26@aol.com', perm_type='user', role='owner')
+        sheet.share(self.owner, perm_type='user', role='owner')
         #sheet.share('', perm_type='user', role='writer')
         return sheet
 
@@ -163,6 +171,7 @@ class Polls(commands.Cog):
             channel=channel_name,
             name=name,
             options=choices,
+            owner = str(ctx.message.author),
             create=True)
         await ctx.sendBlock("New poll created. View it at " + new_poll.url() +"\nChange a cell to XXXXXX to max the amount of votes for that option")
 
@@ -219,10 +228,11 @@ class Polls(commands.Cog):
         msg = msg + "Vote with $vote choice"
         await ctx.sendBlock(msg)
 
-   # @commands.command(
-   #     name="poll-VotesPerPerson"
-   #     help="Sets the amount of votes one person can make (Enter 0 for unlimited). Defaults to one, does not change already made votes")
-   # @commands.check(is_admin_channel)
-   # async def SetVotesPerPerson(self, ctx, channel, amnt):
-   #     poll = GetPoll(channel)
-   #     poll.SetVotesPerPerson(amnt)
+    @commands.command(
+        name="poll-VotesPerPerson",
+        help="Sets the amount of votes one person can make (Enter 0 for unlimited). Defaults to one, does not change already made votes")
+    @commands.check(is_admin_channel)
+    async def SetVotesPerPerson(self, ctx, channel, amnt):
+        poll = GetPoll(channel)
+        poll.SetVotesPerPerson(amnt)
+        ctx.sendBlock("updated vote limit")

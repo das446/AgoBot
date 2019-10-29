@@ -22,7 +22,7 @@ def GetEmail(user):
         if email.startswith(user):
             e = email.split(' - ')[1].strip()
             return e
-    raise Error("Your Gmail was not found, please contact David")
+    raise Error("Your Gmail was not found, please contact the Bot's creator (David)")
 
 def GetCredentials():
     """Read client_secret.json to gain permissions to access Google Sheets API"""
@@ -170,7 +170,7 @@ class Polls(commands.Cog):
         self.settings = settings
         self.client = client
 
-    @commands.command(name="poll-new", help="Create a new poll")
+    @commands.command(name="poll-new", help='Create a new poll. Format should be $poll-new channel "Poll name" "option1,option2,option3" ')
     @commands.check(is_admin_channel)
     async def CreatePoll(self, ctx, channel_name, name, *options):
         """Create a new poll."""
@@ -182,7 +182,7 @@ class Polls(commands.Cog):
             options=choices,
             creator=str(ctx.message.author),
             create=True)
-        await ctx.send("New poll created. View it at " + new_poll.url() + "\nChange a cell to XXXXXX to max the amount of votes for that option")
+        await ctx.send("New poll created. It's been shared to your Gmail and you can view it at " + new_poll.url() + "\nChange a cell to XXXXXX to set the limit of votes for that option")
 
         channel_message = "New Poll: " + name + "\n"
         i = 'A'
@@ -238,7 +238,7 @@ class Polls(commands.Cog):
 
     @commands.command(
         name="poll-vpp",
-        help="Votes Per Person. Sets the amount of votes one person can make (Enter 0 for unlimited). Defaults to one, does not change already made votes")
+        help="Votes Per Person. Sets the amount of votes one person can make (Enter 0 for unlimited). Defaults to 1, does not change already made votes")
     @commands.check(is_admin_channel)
     async def SetVotesPerPerson(self, ctx, channel, amnt):
         poll = GetPoll(channel)

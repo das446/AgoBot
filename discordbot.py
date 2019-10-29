@@ -8,6 +8,7 @@ import configparser
 from datetime import datetime
 import general
 import poll
+import find
 import traceback
 import io
 from security import Error, GetChannelByName
@@ -114,6 +115,7 @@ g = general.General(settings, client)
 
 client.add_cog(g)
 client.add_cog(poll.Polls(settings, client))
+client.add_cog(find.Find(client))
 # client.add_cog(BotCommands.stream.Twitch())
 # client.add_cog(BotCommands.insta.Instagram())
 

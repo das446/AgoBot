@@ -231,7 +231,7 @@ class Polls(commands.Cog):
         for option in poll.options:
             i_int = ord(i[0]) - 65
             votes = str(len(poll.Votes(i_int)))
-            msg = msg + str(i) + ": " + option + "   Votes=" + votes + "\n"
+            msg = msg + str(i) + ": " + option.strip() + "   Votes=" + votes + "\n"
             i = chr(ord(i[0]) + 1)
         msg = msg + "Vote with $vote choice"
         await ctx.sendBlock(msg)

@@ -8,7 +8,7 @@ import configparser
 from datetime import datetime
 from security import is_admin_channel, is_in_channel
 import os
-
+import random
 
 class General(commands.Cog):
 
@@ -58,4 +58,9 @@ class General(commands.Cog):
         game = discord.Game(name=game_name)
         await self.client.change_presence(status = discord.Status.online,activity = game)
         await ctx.sendBlock("Set status to "+game_name)
-    
+   
+    @commands.command(name="random-boardgame", help="Help decide a boardgame to play")
+    async def RandomBoardGame(self,ctx):
+        games = open(os.path.join("files","boardgames")).readlines()
+        game = random.choice(games).strip()
+        await ctx.sendBlock("Try "+game)

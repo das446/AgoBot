@@ -10,6 +10,7 @@ from security import is_admin_channel, is_in_channel
 import os
 import random
 
+
 class General(commands.Cog):
 
     @commands.command(name="stop", help='Stop the bot')
@@ -52,35 +53,31 @@ class General(commands.Cog):
         self.settings = s
         self.client = c
 
-    @commands.command(name="playing",help="Set the bot's activity status")
+    @commands.command(name="playing", help="Set the bot's activity status")
     @commands.check(is_admin_channel)
     async def SetPlaying(self, ctx, game_name):
         game = discord.Game(name=game_name)
-        await self.client.change_presence(status = discord.Status.online,activity = game)
-        await ctx.sendBlock("Set status to "+game_name)
-   
-    @commands.command(name="random-boardgame", help="Help decide a boardgame to play")
-    async def RandomBoardGame(self,ctx):
-        games = open(os.path.join("files","boardgames.txt")).readlines()
-        game = random.choice(games).strip()
-        await ctx.sendBlock("Try "+game)
+        await self.client.change_presence(status=discord.Status.online, activity=game)
+        await ctx.sendBlock("Set status to " + game_name)
 
-    @commands.command(name="files", help="List the text files saved on the server, or view a specific one")
+    @commands.command(
+        name="files",
+        help="List the text files saved on the server, or view a specific one")
     @commands.check(is_admin_channel)
-    async def Files(self,ctx, filename=""):
+    async def Files(self, ctx, filename=""):
         msg = ""
-        if filename=="":
+        if filename == "":
             for f in os.listdir("files"):
                 msg = msg + f + "\n"
             await ctx.sendBlock(msg)
         else:
             try:
-                text = open(os.path.join("files",filename+".txt")).read()
+                text = open(os.path.join("files", filename + ".txt")).read()
                 await ctx.sendBlock(text)
             except FileNotFoundError:
-                raise Error("No file named "+filename+".txt")
+                raise Error("No file named " + filename + ".txt")
 
     @commands.command(name="test")
     async def TestCreator(self, ctx):
         user = ctx.message.author
-        await user.send(content = "I'm a bot",)
+        await user.send(content="I'm a bot",)

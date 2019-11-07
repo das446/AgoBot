@@ -1,12 +1,13 @@
 import discord
 from discord.ext import commands
 
+
 class Find(commands.Cog):
     def __init__(self, c):
         self.client = c
 
     @commands.command(name="find", help="Find text in past messages")
-    async def Find(self,ctx,text):
+    async def Find(self, ctx, text):
         msg = await ctx.send("Searching...")
         text = text.lower()
         server = ctx.message.channel.guild
@@ -19,7 +20,6 @@ class Find(commands.Cog):
                         if text in m and not m.startswith("$find"):
                             print(message.content)
                             urls.append(message.jump_url)
-                except:
-                    print("Couldn't read channel "+str(channel))
-        await msg.edit(content="Found these messages:\n"+"\n".join(urls))
-
+                except BaseException:
+                    print("Couldn't read channel " + str(channel))
+        await msg.edit(content="Found these messages:\n" + "\n".join(urls))

@@ -61,6 +61,26 @@ class General(commands.Cog):
    
     @commands.command(name="random-boardgame", help="Help decide a boardgame to play")
     async def RandomBoardGame(self,ctx):
-        games = open(os.path.join("files","boardgames")).readlines()
+        games = open(os.path.join("files","boardgames.txt")).readlines()
         game = random.choice(games).strip()
         await ctx.sendBlock("Try "+game)
+
+    @commands.command(name="files", help="List the text files saved on the server, or view a specific one")
+    @commands.check(is_admin_channel)
+    async def Files(self,ctx, filename=""):
+        msg = ""
+        if filename=="":
+            for f in os.listdir("files"):
+                msg = msg + f + "\n"
+            await ctx.sendBlock(msg)
+        else:
+            try:
+                text = open(os.path.join("files",filename+".txt")).read()
+                await ctx.sendBlock(text)
+            except FileNotFoundError:
+                raise Error("No file named "+filename+".txt")
+
+    @commands.command(name="test")
+    async def TestCreator(self, ctx):
+        user = ctx.message.author
+        await user.send(content = "I'm a bot",)

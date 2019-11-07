@@ -88,7 +88,7 @@ async def restrict_to_dev(ctx):
 @client.event
 async def on_command_error(ctx, error):
     """Displays a friendly error message to the user, and a detailed error message to mods if needed"""
-    if hasattr(error.original, "handled"):
+    if hasattr(error.original, 'handled'):
         await ctx.sendBlock(str(error.original))
     else:
         stream = io.StringIO()

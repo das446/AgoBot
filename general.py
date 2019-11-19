@@ -6,7 +6,7 @@ import sys
 from discord.ext import commands
 import configparser
 from datetime import datetime
-from security import is_admin_channel, is_in_channel
+from security import is_admin_channel, is_in_channel, Error
 import os
 import random
 import typing
@@ -73,6 +73,8 @@ class General(commands.Cog):
         elif len(title_filter)>1:
             games = filter(lambda g: title_filter.lower() in g.lower(), games)
         games = list(games)
+        if len(games)==0:
+            raise Error("No games found.")
         random.shuffle(games)
         chosen_games = games[:amount]
         await ctx.sendBlock("Try:\n" + "".join(chosen_games))

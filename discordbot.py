@@ -43,8 +43,7 @@ class Settings():
         self.settings = self.config[self.environment]
 
         self.main_channel = self.settings["channel_main"]
-        self.admin_channel = int(self.settings["channel_admin"])
-        self.admin_channel_name = self.settings["channel_admin_name"]
+        self.admin_channel = self.settings["channel_admin"]
         self.poll_log = self.settings["poll_log"]
         self.bot_log = self.settings["bot_log"]
         self.server = self.settings["server"]
@@ -102,13 +101,13 @@ async def on_command_error(ctx, error):
             traceback.print_tb(error.original.__traceback__, file=stream)
             error_msg = stream.getvalue()
             await ctx.sendBlock("An error occured, please alert a server admin.")
-            await client.get_channel(settings.bot_log).sendBlock(str(error) + "\n" + str(error_msg))
+            await client.GetChannelByName(settings.bot_log).sendBlock(str(error) + "\n" + str(error_msg))
         except BaseException:
             stream = io.StringIO()
             traceback.print_tb(error.__traceback__, file=stream)
             error_msg = stream.getvalue()
             await ctx.sendBlock("An error occured, please alert a server admin.")
-            await client.get_channel(settings.bot_log).sendBlock(str(error) + "\n" + str(error_msg))
+            await client.GetChannelByName(settings.bot_log).sendBlock(str(error) + "\n" + str(error_msg))
 
 
 async def loop():

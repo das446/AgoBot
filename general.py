@@ -63,6 +63,6 @@ class General(commands.Cog):
     @commands.command(name="random-boardgame",
                       help="Help decide a boardgame to play")
     async def RandomBoardGame(self, ctx):
-        games = open(os.path.join("files", "boardgames")).readlines()
+        games = open(os.path.join("files", "boardgames.txt")).readlines()
         game = random.choice(games).strip()
         await ctx.sendBlock("Try " + game)

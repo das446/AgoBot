@@ -41,7 +41,7 @@ class General(commands.Cog):
         with open(os.path.join('files', 'info.txt')) as info:
             message = info.read()
             now = datetime.now()
-            uptime = now - self.settings.start_time
+            uptime = now - ctx.bot.settings.start_time
             message = message + "Current Uptime: " + str(uptime)
             await ctx.sendBlock(message)
 

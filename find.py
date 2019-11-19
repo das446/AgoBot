@@ -15,8 +15,8 @@ class Find(commands.Cog):
                     for message in await channel.history(limit=500).flatten():
                         m = message.content.lower()
                         if text in m and not m.startswith("$find"):
-                            print(message.content)
                             urls.append(message.jump_url)
                 except BaseException:
                     print("Couldn't read channel " + str(channel))
-        await msg.edit(content="Found these messages:\n" + "\n".join(urls))
+        text = "Found these messages:\n"+"\n".join(urls)
+        await msg.edit(content=text[0:2000])

@@ -13,21 +13,10 @@ import traceback
 import io
 from security import Error, GetChannelByName
 
-print("Program started")
-
 client = commands.Bot(command_prefix='$')
-
-commands.Bot.GetChannelByName = GetChannelByName
-
-running = False
-
 
 async def sendBlock(self, s):
     return await self.send('```' + s + '```')
-
-discord.channel.TextChannel.sendBlock = sendBlock
-commands.context.Context.sendBlock = sendBlock
-commands.context.Context.GetChannelByName = GetChannelByName
 
 class Settings():
     def __init__(self):
@@ -49,10 +38,6 @@ class Settings():
         self.server = self.settings["server"]
         self.key = self.settings["key"]
         self.bot = self.settings["bot_id"]
-
-
-settings = Settings()
-client.settings = settings
 
 @client.event
 async def on_ready():
@@ -127,13 +112,32 @@ async def loop():
             for channel in channels:
                 channel.send(post)
 
-client.add_cog(general.General())
-client.add_cog(poll.Polls())
-client.add_cog(find.Find())
+
+def main():
+    print("Program started")
+    global client
+    client = commands.Bot(command_prefix='$')
+
+    commands.Bot.GetChannelByName = GetChannelByName
+
+    running = False
+
+    discord.channel.TextChannel.sendBlock = sendBlock
+    commands.context.Context.sendBlock = sendBlock
+    commands.context.Context.GetChannelByName = GetChannelByName
+    settings = Settings()
+    client.settings = settings
+    client.add_cog(general.General())
+    client.add_cog(poll.Polls())
+    client.add_cog(find.Find())
 # client.add_cog(BotCommands.stream.Twitch())
 # client.add_cog(BotCommands.insta.Instagram())
 
 # if settings.environment == settings.prod:
 #    client.loop.create_task(loop())
 
-client.run(settings.key)
+    client.run(settings.key)
+
+  
+
+

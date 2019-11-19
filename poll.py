@@ -16,7 +16,7 @@ import gspread
 import os
 
 """
-This bot uses Google Sheets as a way to 
+This bot uses Google Sheets as a way to store user's votes 
 
 
 """
@@ -144,7 +144,7 @@ class Poll():
         """Returns a poll's votes for a given option index."""
         sheet = self.GetSheet().get_worksheet(0)
         row = sheet.row_values(index + 1)
-        return row[1:]
+        return row[1:] #don't send header
 
     def AddOption(self, option):
         self.options.append(option)

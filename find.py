@@ -3,9 +3,6 @@ from discord.ext import commands
 
 
 class Find(commands.Cog):
-    def __init__(self, c):
-        self.client = c
-
     @commands.command(name="find", help="Find text in past messages")
     async def Find(self, ctx, text):
         msg = await ctx.send("Searching...")

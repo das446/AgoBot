@@ -19,10 +19,10 @@ class General(commands.Cog):
     @commands.check(is_admin_channel)
     async def Stop(self, ctx, *msg):
         """Stops the bot,"""
-        channel = self.client.get_channel(self.settings.main_channel)
+        channel = ctx.bot.get_channel(ctx.bot.settings.main_channel)
         if len(msg) > 0:
             await channel.sendBlock('AGO Bot will be down for maintenance')
-        await self.client.logout()
+        await ctx.bot.logout()
 
     @commands.command(name='events', help='Show upcoming events.')
     async def ShowEvents(self, ctx):
@@ -51,15 +51,11 @@ class General(commands.Cog):
         with open(os.path.join("files", 'schedule.txt')) as schedule:
             await ctx.sendBlock(schedule.read())
 
-    def __init__(self, s, c):
-        self.settings = s
-        self.client = c
-
     @commands.command(name="playing", help="Set the bot's activity status")
     @commands.check(is_admin_channel)
     async def SetPlaying(self, ctx, game_name):
         game = discord.Game(name=game_name)
-        await self.client.change_presence(status=discord.Status.online, activity=game)
+        await ctx.bot.change_presence(status=discord.Status.online, activity=game)
         await ctx.sendBlock("Set status to " + game_name)
 
     @commands.command(name="boardgame",

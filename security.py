@@ -4,8 +4,12 @@ dev = False
 
 
 class Error(Exception):
+    """This is a custom error message class that can be created and raised to immediately stop a 
+       function's execution in a friendly manner. 
+       See discordbot.on_command_error
+    """
     def __init__(self, message):
-        self.message = "Handled: " + message
+        self.message = message
         self.handled = True
 
 

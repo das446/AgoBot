@@ -127,11 +127,9 @@ async def loop():
             for channel in channels:
                 channel.send(post)
 
-g = general.General(settings, client)
-
-client.add_cog(g)
-client.add_cog(poll.Polls(settings, client))
-client.add_cog(find.Find(client))
+client.add_cog(general.General())
+client.add_cog(poll.Polls())
+client.add_cog(find.Find())
 # client.add_cog(BotCommands.stream.Twitch())
 # client.add_cog(BotCommands.insta.Instagram())
 

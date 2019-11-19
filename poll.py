@@ -179,16 +179,12 @@ def GetPoll(channel):
 
 class Polls(commands.Cog):
 
-    def __init__(self, settings, client):
-        self.settings = settings
-        self.client = client
-
     @commands.command(
         name="poll-new", help='Create a new poll. Format should be $poll-new channel "Poll name" "option1,option2,option3" ')
     @commands.check(is_admin_channel)
     async def CreatePoll(self, ctx, channel_name, name, *options):
         """Create a new poll."""
-        channel = self.client.GetChannelByName(channel_name)
+        channel = ctx.bot.GetChannelByName(channel_name)
         choices = options[0].split(',')
         new_poll = Poll(
             channel=channel_name,
@@ -209,7 +205,7 @@ class Polls(commands.Cog):
 
         pins = await channel.pins()
         for pin in pins:
-            if str(pin.author) == self.settings.bot:
+            if str(pin.author) == str(ctx.bot):
                 await pin.unpin()
                 break
         pin_msg = await channel.sendBlock(channel_message)

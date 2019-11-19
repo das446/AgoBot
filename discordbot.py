@@ -27,7 +27,7 @@ async def sendBlock(self, s):
 
 discord.channel.TextChannel.sendBlock = sendBlock
 commands.context.Context.sendBlock = sendBlock
-
+commands.context.Context.GetChannelByName = GetChannelByName
 
 class Settings():
     def __init__(self):
@@ -45,13 +45,15 @@ class Settings():
         self.main_channel = int(self.settings["channel_main"])
         self.admin_channel = int(self.settings["channel_admin"])
         self.admin_channel_name = self.settings["channel_admin_name"]
+        self.poll_log = self.settings["poll_log"]
+        self.bot_log = self.settings["bot_log"]
         self.server = self.settings["server"]
         self.key = self.settings["key"]
         self.bot = self.settings["bot_id"]
 
 
 settings = Settings()
-
+client.settings = settings
 
 @client.event
 async def on_ready():
@@ -88,14 +90,25 @@ async def restrict_to_dev(ctx):
 @client.event
 async def on_command_error(ctx, error):
     """Displays a friendly error message to the user, and a detailed error message to mods if needed"""
-    if hasattr(error.original, "handled"):
-        await ctx.sendBlock(str(error.original))
-    else:
-        stream = io.StringIO()
-        traceback.print_tb(error.original.__traceback__, file=stream)
-        error_msg = stream.getvalue()
-        await ctx.sendBlock("An error occured, please alert a server admin.")
-        await client.get_channel(settings.admin_channel).sendBlock(str(error) + "\n" + str(error_msg))
+    
+    try:
+        if error.original.handled:
+            await ctx.sendBlock(str(error.original))
+        else:
+            await ctx.sendBlock("An unexpected error occured")
+    except BaseException:
+        try:
+            stream = io.StringIO()
+            traceback.print_tb(error.original.__traceback__, file=stream)
+            error_msg = stream.getvalue()
+            await ctx.sendBlock("An error occured, please alert a server admin.")
+            await client.get_channel(settings.bot_log).sendBlock(str(error) + "\n" + str(error_msg))
+        except BaseException:
+            stream = io.StringIO()
+            traceback.print_tb(error.__traceback__, file=stream)
+            error_msg = stream.getvalue()
+            await ctx.sendBlock("An error occured, please alert a server admin.")
+            await client.get_channel(settings.bot_log).sendBlock(str(error) + "\n" + str(error_msg))
 
 
 async def loop():

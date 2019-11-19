@@ -15,14 +15,17 @@ from oauth2client.service_account import ServiceAccountCredentials
 import gspread
 import os
 
+
 def GetEmail(user):
     # File format should be username#1234 - email@gmail.com
-    emails = open(os.path.join("files","mod-emails.txt"),"r").readlines()
+    emails = open(os.path.join("files", "mod-emails.txt"), "r").readlines()
     for email in emails:
         if email.startswith(user):
             e = email.split(' - ')[1].strip()
             return e
-    raise Error("Your Gmail was not found, please contact the Bot's creator (David)")
+    raise Error(
+        "Your Gmail was not found, please contact the Bot's creator (David)")
+
 
 def GetCredentials():
     """Read client_secret.json to gain permissions to access Google Sheets API"""
@@ -46,7 +49,7 @@ class Poll():
         key="",
         maxVotesPerOption=0,
         maxVotesPerPerson=1,
-        creator = "",
+        creator="",
         create=False,
             adminLocked=False):
         self.name = name
@@ -144,7 +147,6 @@ class Poll():
     def SetVotesPerPerson(self, amnt):
         self.maxVotesPerPerson = amnt
         self.SaveToFile()
-        
 
 
 def GetPoll(channel):
@@ -158,8 +160,12 @@ def GetPoll(channel):
     key = details[1]
     maxPerOption = int(details[2])
     maxPerUser = int(details[3])
-    poll = Poll(name=name, channel=channel, key=key, maxVotesPerPerson = maxPerUser)
-    #TODO make it read from GSheet instead incase options change
+    poll = Poll(
+        name=name,
+        channel=channel,
+        key=key,
+        maxVotesPerPerson=maxPerUser)
+    # TODO make it read from GSheet instead incase options change
     poll.options = details[4:]
     return poll
 
@@ -170,7 +176,8 @@ class Polls(commands.Cog):
         self.settings = settings
         self.client = client
 
-    @commands.command(name="poll-new", help='Create a new poll. Format should be $poll-new channel "Poll name" "option1,option2,option3" ')
+    @commands.command(
+        name="poll-new", help='Create a new poll. Format should be $poll-new channel "Poll name" "option1,option2,option3" ')
     @commands.check(is_admin_channel)
     async def CreatePoll(self, ctx, channel_name, name, *options):
         """Create a new poll."""
@@ -214,12 +221,15 @@ class Polls(commands.Cog):
         name="vote",
         help="Vote on the current channel's pole")
     async def Vote(self, ctx, choice):
-        processing = await ctx.sendBlock("Processing your vote.")
+        processing = await ctx.sendBlock("Processing your vote... These messages will be logged and deleted when completed...")
         user = str(ctx.message.author)
         channel = str(ctx.channel)
         poll = GetPoll(channel)
         poll.AddVote(choice, user)
-        await processing.edit(content="```Thank's for voting " + user + "!```")
+        await processing.delete()
+        await ctx.message.delete()
+        await ctx.bot.GetChannelByName(ctx.bot.settings.poll_log).sendBlock(user + " voted for " + choice + " in " + channel)
+
     @commands.command(
         name="poll",
         help="Show info about the channel's current poll")
@@ -231,9 +241,12 @@ class Polls(commands.Cog):
         for option in poll.options:
             i_int = ord(i[0]) - 65
             votes = str(len(poll.Votes(i_int)))
-            msg = msg + str(i) + ": " + option.strip() + "   Votes=" + votes + "\n"
+            msg = msg + str(i) + ": " + option.strip() + \
+                "   Votes=" + votes + "\n"
             i = chr(ord(i[0]) + 1)
         msg = msg + "Vote with $vote choice"
+        if await is_admin_channel(ctx):
+            msg = msg + "\n" + poll.url()
         await ctx.sendBlock(msg)
 
     @commands.command(
@@ -244,5 +257,5 @@ class Polls(commands.Cog):
         poll = GetPoll(channel)
         poll.SetVotesPerPerson(int(amnt))
         if amnt == "0":
-            amnt="unlimited"
+            amnt = "unlimited"
         await ctx.sendBlock("Changed votes per person to " + amnt)

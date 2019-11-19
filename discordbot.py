@@ -42,7 +42,7 @@ class Settings():
 
         self.settings = self.config[self.environment]
 
-        self.main_channel = int(self.settings["channel_main"])
+        self.main_channel = self.settings["channel_main"]
         self.admin_channel = int(self.settings["channel_admin"])
         self.admin_channel_name = self.settings["channel_admin_name"]
         self.poll_log = self.settings["poll_log"]
@@ -60,7 +60,7 @@ async def on_ready():
     """Called when the bot starts."""
     print("Bot started")
     if len(sys.argv) > 2:
-        channel = client.get_channel(settings.main_channel)
+        channel = client.GetChannelByName(settings.main_channel)
         await channel.sendBlock("AGO Bot is operational.\nType $help to view available commands")
 
 # handle files
@@ -68,7 +68,7 @@ async def on_ready():
 async def on_message(message):
     """Used to update files that other commands read"""
     if message.author != client.user and str(
-            message.channel) == settings.admin_channel_name and len(
+            message.channel) == client.GetChannelByName(client.settings.admin_channel) and len(
             message.attachments) > 0:
         attachment = message.attachments[0]
         filename = attachment.filename

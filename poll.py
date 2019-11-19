@@ -15,6 +15,13 @@ from oauth2client.service_account import ServiceAccountCredentials
 import gspread
 import os
 
+"""
+This bot uses Google Sheets as a way to 
+
+
+"""
+
+
 
 def GetEmail(user):
     # File format should be username#1234 - email@gmail.com
@@ -88,7 +95,7 @@ class Poll():
         return sheet
 
     def url(self):
-        "It is easier to store just the id and generate the url dynamicly"
+        """It is easier to store just the id and generate the url dynamicly"""
         return "https://docs.google.com/spreadsheets/d/%s" % self.id
 
     def SaveToFile(self):
@@ -219,9 +226,9 @@ class Polls(commands.Cog):
 
     @commands.command(
         name="vote",
-        help="Vote on the current channel's pole")
+        help="Vote on the current channel's pole. Your message will be recorded and deleted afterwards.")
     async def Vote(self, ctx, choice):
-        processing = await ctx.sendBlock("Processing your vote... These messages will be logged and deleted when completed...")
+        processing = await ctx.sendBlock("Processing your vote... These messages will be recorded and deleted when completed...")
         user = str(ctx.message.author)
         channel = str(ctx.channel)
         poll = GetPoll(channel)
@@ -253,9 +260,9 @@ class Polls(commands.Cog):
         name="poll-vpp",
         help="Votes Per Person. Sets the amount of votes one person can make (Enter 0 for unlimited). Defaults to 1, does not change already made votes")
     @commands.check(is_admin_channel)
-    async def SetVotesPerPerson(self, ctx, channel, amnt):
+    async def SetVotesPerPerson(self, ctx, channel, amnt: int):
         poll = GetPoll(channel)
-        poll.SetVotesPerPerson(int(amnt))
-        if amnt == "0":
+        poll.SetVotesPerPerson(amnt)
+        if amnt == 0:
             amnt = "unlimited"
-        await ctx.sendBlock("Changed votes per person to " + amnt)
+        await ctx.sendBlock("Changed votes per person to " + str(amnt))

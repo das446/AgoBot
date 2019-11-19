@@ -90,6 +90,10 @@ async def restrict_to_dev(ctx):
 async def on_command_error(ctx, error):
     """Displays a friendly error message to the user, and a detailed error message to mods if needed"""
     
+    if type(error) == commands.errors.BadArgument:
+        await ctx.sendBlock("One of your options isn't a number that needs to be.")
+        return
+
     try:
         if error.original.handled:
             await ctx.sendBlock(str(error.original))

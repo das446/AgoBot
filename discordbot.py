@@ -12,6 +12,8 @@ import find
 import traceback
 import io
 from security import Error, GetChannelByName
+import os
+
 
 client = commands.Bot(command_prefix='$')
 
@@ -51,12 +53,11 @@ async def on_ready():
 @client.event
 async def on_message(message):
     """Used to update files that other commands read"""
-    if message.author != client.user and str(
-            message.channel) == client.GetChannelByName(client.settings.admin_channel) and len(
+    if message.author != client.user and message.channel == client.GetChannelByName(client.settings.admin_channel) and len(
             message.attachments) > 0:
         attachment = message.attachments[0]
         filename = attachment.filename
-        if filename.endswith('.txt'):
+        if filename.endswith('.txt') or filename.endswith('csv'):
             await attachment.save(os.path.join("files", filename))
             await message.channel.sendBlock("Updated file " + filename)
     await client.process_commands(message)
@@ -65,9 +66,9 @@ async def on_message(message):
 @client.check
 async def restrict_to_dev(ctx):
     """Allows a dev and production version of the bot to be running at the same time without interference"""
-    if settings.environment == "dev":
+    if ctx.bot.settings.environment == "dev":
         return str(ctx.channel) == "testground"
-    if settings.environment == "prod":
+    if ctx.bot.settings.environment == "prod":
         return str(ctx.channel) != "testground"
 
 
@@ -77,6 +78,8 @@ async def on_command_error(ctx, error):
     
     if type(error) == commands.errors.BadArgument:
         await ctx.sendBlock("One of your options isn't a number that needs to be.")
+        return
+    elif type(error) == commands.errors.CheckFailure:
         return
 
     try:
@@ -90,13 +93,13 @@ async def on_command_error(ctx, error):
             traceback.print_tb(error.original.__traceback__, file=stream)
             error_msg = stream.getvalue()
             await ctx.sendBlock("An error occured, please alert a server admin.")
-            await client.GetChannelByName(settings.bot_log).sendBlock(str(error) + "\n" + str(error_msg))
+            await ctx.bot.GetChannelByName(ctx.bot.settings.bot_log).sendBlock(str(type(error.original))+" "+str(error.original) + "\n" + str(error_msg))
         except BaseException:
             stream = io.StringIO()
             traceback.print_tb(error.__traceback__, file=stream)
             error_msg = stream.getvalue()
             await ctx.sendBlock("An error occured, please alert a server admin.")
-            await client.GetChannelByName(settings.bot_log).sendBlock(str(error) + "\n" + str(error_msg))
+            await ctx.bot.GetChannelByName(ctx.bot.settings.bot_log).sendBlock(str(type(error)) + " " + str(error) + "\n" + str(error_msg))
 
 
 async def loop():
@@ -115,8 +118,9 @@ async def loop():
 
 def main():
     print("Program started")
-    global client
-    client = commands.Bot(command_prefix='$')
+    global client 
+    settings = Settings() 
+    client.settings = settings
 
     commands.Bot.GetChannelByName = GetChannelByName
 
@@ -125,8 +129,6 @@ def main():
     discord.channel.TextChannel.sendBlock = sendBlock
     commands.context.Context.sendBlock = sendBlock
     commands.context.Context.GetChannelByName = GetChannelByName
-    settings = Settings()
-    client.settings = settings
     client.add_cog(general.General())
     client.add_cog(poll.Polls())
     client.add_cog(find.Find())

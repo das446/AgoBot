@@ -63,7 +63,7 @@ class General(commands.Cog):
     async def RandomBoardGame(self, ctx, amount: typing.Optional[int]=1, title_filter=""):
         if amount<1:
             raise Error("Enter a positive number for amount")
-        games = open(os.path.join("files", "boardgames.txt")).readlines()
+        games = open(os.path.join("files", "BoardGames.csv")).readlines()
         if len(title_filter)==1:
             games = filter(lambda g: g.startswith(title_filter),games)
         elif len(title_filter)>1:

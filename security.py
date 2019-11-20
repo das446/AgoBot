@@ -15,7 +15,7 @@ class Error(Exception):
 
 async def is_admin_channel(ctx):
     """Returns whether the context's channel is an admin channel"""
-    return str(ctx.channel) in ["testground", "mods-are-gods"]
+    return str(ctx.channel) in ["testground", "mods-are-gods", "bot-logs"]
 
 
 def is_in_channel(channels):

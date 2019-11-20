@@ -1,0 +1,27 @@
+[DEFAULT]
+channel_main = testground 
+channel_general =  
+channel_anime = 
+channel_rpg = 
+channel_videogames = 
+channel_boardgames =
+channel_cardgames =  
+channel_cosplay = 
+channel_admin = testground
+server = Server
+bot_id = AgoBot#****
+poll_log = testground  
+bot_log = testground
+
+[local]
+server = local
+
+[dev]
+key = ***********************************************************
+
+[prod]
+key = ***********************************************************
+channel_main = general
+channel_admin = admin
+poll_log = bot-logs
+bot_log = bot-logs

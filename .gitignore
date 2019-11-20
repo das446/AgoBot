@@ -5,3 +5,5 @@ polls/
 files/
 tif.py
 AgoBot
+*.pyc
+*.pyo

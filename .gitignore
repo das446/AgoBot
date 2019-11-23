@@ -4,3 +4,6 @@ client_secret.json
 polls/
 files/
 tif.py
+AgoBot
+*.pyc
+*.pyo

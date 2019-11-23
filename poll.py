@@ -15,14 +15,24 @@ from oauth2client.service_account import ServiceAccountCredentials
 import gspread
 import os
 
+"""
+This bot uses Google Sheets as a way to store user's votes 
+
+
+"""
+
+
+
 def GetEmail(user):
     # File format should be username#1234 - email@gmail.com
-    emails = open(os.path.join("files","mod-emails.txt"),"r").readlines()
+    emails = open(os.path.join("files", "mod-emails.txt"), "r").readlines()
     for email in emails:
         if email.startswith(user):
             e = email.split(' - ')[1].strip()
             return e
-    raise Error("Your Gmail was not found, please contact the Bot's creator (David)")
+    raise Error(
+        "Your Gmail was not found, please contact the Bot's creator (David)")
+
 
 def GetCredentials():
     """Read client_secret.json to gain permissions to access Google Sheets API"""
@@ -46,7 +56,7 @@ class Poll():
         key="",
         maxVotesPerOption=0,
         maxVotesPerPerson=1,
-        creator = "",
+        creator="",
         create=False,
             adminLocked=False):
         self.name = name
@@ -85,7 +95,7 @@ class Poll():
         return sheet
 
     def url(self):
-        "It is easier to store just the id and generate the url dynamicly"
+        """It is easier to store just the id and generate the url dynamicly"""
         return "https://docs.google.com/spreadsheets/d/%s" % self.id
 
     def SaveToFile(self):
@@ -134,7 +144,7 @@ class Poll():
         """Returns a poll's votes for a given option index."""
         sheet = self.GetSheet().get_worksheet(0)
         row = sheet.row_values(index + 1)
-        return row[1:]
+        return row[1:] #don't send header
 
     def AddOption(self, option):
         self.options.append(option)
@@ -144,7 +154,6 @@ class Poll():
     def SetVotesPerPerson(self, amnt):
         self.maxVotesPerPerson = amnt
         self.SaveToFile()
-        
 
 
 def GetPoll(channel):
@@ -158,23 +167,24 @@ def GetPoll(channel):
     key = details[1]
     maxPerOption = int(details[2])
     maxPerUser = int(details[3])
-    poll = Poll(name=name, channel=channel, key=key, maxVotesPerPerson = maxPerUser)
-    #TODO make it read from GSheet instead incase options change
+    poll = Poll(
+        name=name,
+        channel=channel,
+        key=key,
+        maxVotesPerPerson=maxPerUser)
+    # TODO make it read from GSheet instead incase options change
     poll.options = details[4:]
     return poll
 
 
 class Polls(commands.Cog):
 
-    def __init__(self, settings, client):
-        self.settings = settings
-        self.client = client
-
-    @commands.command(name="poll-new", help='Create a new poll. Format should be $poll-new channel "Poll name" "option1,option2,option3" ')
+    @commands.command(
+        name="poll-new", help='Create a new poll. Format should be $poll-new channel "Poll name" "option1,option2,option3" ')
     @commands.check(is_admin_channel)
     async def CreatePoll(self, ctx, channel_name, name, *options):
         """Create a new poll."""
-        channel = self.client.GetChannelByName(channel_name)
+        channel = ctx.bot.GetChannelByName(channel_name)
         choices = options[0].split(',')
         new_poll = Poll(
             channel=channel_name,
@@ -195,7 +205,7 @@ class Polls(commands.Cog):
 
         pins = await channel.pins()
         for pin in pins:
-            if str(pin.author) == self.settings.bot:
+            if str(pin.author) == str(ctx.bot):
                 await pin.unpin()
                 break
         pin_msg = await channel.sendBlock(channel_message)
@@ -212,14 +222,17 @@ class Polls(commands.Cog):
 
     @commands.command(
         name="vote",
-        help="Vote on the current channel's pole")
+        help="Vote on the current channel's pole. Your message will be recorded and deleted afterwards.")
     async def Vote(self, ctx, choice):
-        processing = await ctx.sendBlock("Processing your vote.")
+        processing = await ctx.sendBlock("Processing your vote... These messages will be recorded and deleted when completed...")
         user = str(ctx.message.author)
         channel = str(ctx.channel)
         poll = GetPoll(channel)
         poll.AddVote(choice, user)
-        await processing.edit(content="```Thank's for voting " + user + "!```")
+        await processing.delete()
+        await ctx.message.delete()
+        await ctx.bot.GetChannelByName(ctx.bot.settings.poll_log).sendBlock(user + " voted for " + choice + " in " + channel)
+
     @commands.command(
         name="poll",
         help="Show info about the channel's current poll")
@@ -231,18 +244,21 @@ class Polls(commands.Cog):
         for option in poll.options:
             i_int = ord(i[0]) - 65
             votes = str(len(poll.Votes(i_int)))
-            msg = msg + str(i) + ": " + option.strip() + "   Votes=" + votes + "\n"
+            msg = msg + str(i) + ": " + option.strip() + \
+                "   Votes=" + votes + "\n"
             i = chr(ord(i[0]) + 1)
         msg = msg + "Vote with $vote choice"
+        if await is_admin_channel(ctx):
+            msg = msg + "\n" + poll.url()
         await ctx.sendBlock(msg)
 
     @commands.command(
         name="poll-vpp",
         help="Votes Per Person. Sets the amount of votes one person can make (Enter 0 for unlimited). Defaults to 1, does not change already made votes")
     @commands.check(is_admin_channel)
-    async def SetVotesPerPerson(self, ctx, channel, amnt):
+    async def SetVotesPerPerson(self, ctx, channel, amnt: int):
         poll = GetPoll(channel)
-        poll.SetVotesPerPerson(int(amnt))
-        if amnt == "0":
-            amnt="unlimited"
-        await ctx.sendBlock("Changed votes per person to " + amnt)
+        poll.SetVotesPerPerson(amnt)
+        if amnt == 0:
+            amnt = "unlimited"
+        await ctx.sendBlock("Changed votes per person to " + str(amnt))

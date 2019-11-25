@@ -79,7 +79,12 @@ async def on_command_error(ctx, error):
     if type(error) == commands.errors.BadArgument:
         await ctx.sendBlock("One of your options isn't a number that needs to be.")
         return
+
     elif type(error) == commands.errors.CheckFailure:
+        return
+ 
+    elif type(error) == commands.errors.MissingRequiredArgument:
+        await ctx.sendBlock("You're missing a required value in your command")
         return
 
     try:
@@ -93,7 +98,8 @@ async def on_command_error(ctx, error):
             traceback.print_tb(error.original.__traceback__, file=stream)
             error_msg = stream.getvalue()
             await ctx.sendBlock("An error occured, please alert a server admin.")
-            await ctx.bot.GetChannelByName(ctx.bot.settings.bot_log).sendBlock(str(type(error.original))+" "+str(error.original) + "\n" + str(error_msg))
+            msg = str(type(error.original))+" "+str(error.original) + "\n" + str(error_msg)
+            await ctx.bot.GetChannelByName(ctx.bot.settings.bot_log).sendBlock(msg)
         except BaseException:
             stream = io.StringIO()
             traceback.print_tb(error.__traceback__, file=stream)

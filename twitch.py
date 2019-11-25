@@ -1,11 +1,15 @@
 import os
+import requests
+import pprint
+import json
+import time
 
-def loop():
+def OnLoop(bot):
     fileName = os.path.join("files","streams.txt") 
     curGame = GetCurrentGame().strip()
-    latestGame = GetMostRecentGame(fileName)
-    print("cur="+curGame+",rec="+latestGame+"_")
-    if latestGame != curGame:
+    prevGame = GetMostRecentGame(fileName)
+    print("cur="+curGame+",rec="+prevGame+"_")
+    if prevGame != curGame:
         open(fileName,"a+").write(curGame.strip()+"\n")
     else:
         print("dup")
@@ -18,9 +22,22 @@ def GetMostRecentGame(f):
     
 
 def GetCurrentGame():
-    return input("Enter Game:  ")
-
-
+    channel = open(os.path.join("files","twitch-id.txt")).read().strip()
+    key = open(os.path.join("files","twitch-key.txt")).read().strip()
+    url = "https://api.twitch.tv/kraken/channels/"+channel
+    headers = {
+        'Accept': 'application/vnd.twitchtv.v5+json',
+        'Client-ID': key
+    } 
+    r = requests.get(url,headers=headers)
+    data = json.loads(r.text)
+    game = data["game"]
+    if game == "Board Games"
+        game = data["status"].split(':')[1]
+    return game
 
 while True:
-    loop()
+    OnLoop()
+    time.sleep(10)
+
+

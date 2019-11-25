@@ -14,6 +14,9 @@ import io
 from security import Error, GetChannelByName
 import os
 
+import fb
+import twitch
+
 
 client = commands.Bot(command_prefix='$')
 
@@ -102,19 +105,15 @@ async def on_command_error(ctx, error):
             await ctx.bot.GetChannelByName(ctx.bot.settings.bot_log).sendBlock(str(type(error)) + " " + str(error) + "\n" + str(error_msg))
 
 
-async def loop():
+async def loop(self):
     """Polls FaceBook and other sources"""
     running = True
     await client.wait_until_ready()
     channel = client.get_channel(test_channel)
     while running:
         await asyncio.sleep(60)
-        post = fb.GetMostRecentPost()
-        if post != last_post:
-            channels = post.getChannels()
-            for channel in channels:
-                channel.send(post)
-
+        fb.OnLoop(self)
+        twitch.OnLoop(self)
 
 def main():
     print("Program started")
@@ -132,11 +131,11 @@ def main():
     client.add_cog(general.General())
     client.add_cog(poll.Polls())
     client.add_cog(find.Find())
-# client.add_cog(BotCommands.stream.Twitch())
-# client.add_cog(BotCommands.insta.Instagram())
+	# client.add_cog(BotCommands.stream.Twitch())
+	# client.add_cog(BotCommands.insta.Instagram())
 
-# if settings.environment == settings.prod:
-#    client.loop.create_task(loop())
+	if settings.environment == settings.prod:
+	    client.loop.create_task(loop())
 
     client.run(settings.key)
 

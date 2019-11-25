@@ -13,15 +13,25 @@ import traceback
 import io
 from security import Error, GetChannelByName
 import os
-
-import fb
 import twitch
 
 
 client = commands.Bot(command_prefix='$')
 
+
 async def sendBlock(self, s):
     return await self.send('```' + s + '```')
+
+
+async def sendBlockToChannel(self, channel_name, msg):
+    channel =  GetChannelByName(self,channel_name)
+    return await channel.sendBlock(msg)
+
+
+async def sendToChannel(self, channel_name, msg):
+    channel = GetChannelByName(self,channel_name)
+    return await channel.send(msg)
+
 
 class Settings():
     def __init__(self):
@@ -43,6 +53,9 @@ class Settings():
         self.server = self.settings["server"]
         self.key = self.settings["key"]
         self.bot = self.settings["bot_id"]
+    def __getitem__(self, key):
+        return self.settings[key]
+
 
 @client.event
 async def on_ready():
@@ -56,8 +69,8 @@ async def on_ready():
 @client.event
 async def on_message(message):
     """Used to update files that other commands read"""
-    if message.author != client.user and message.channel == client.GetChannelByName(client.settings.admin_channel) and len(
-            message.attachments) > 0:
+    if message.author != client.user and message.channel == client.GetChannelByName(
+            client.settings.admin_channel) and len(message.attachments) > 0:
         attachment = message.attachments[0]
         filename = attachment.filename
         if filename.endswith('.txt') or filename.endswith('csv'):
@@ -78,7 +91,7 @@ async def restrict_to_dev(ctx):
 @client.event
 async def on_command_error(ctx, error):
     """Displays a friendly error message to the user, and a detailed error message to mods if needed"""
-    
+
     if type(error) == commands.errors.BadArgument:
         await ctx.sendBlock("One of your options isn't a number that needs to be.")
         return
@@ -96,7 +109,7 @@ async def on_command_error(ctx, error):
             traceback.print_tb(error.original.__traceback__, file=stream)
             error_msg = stream.getvalue()
             await ctx.sendBlock("An error occured, please alert a server admin.")
-            await ctx.bot.GetChannelByName(ctx.bot.settings.bot_log).sendBlock(str(type(error.original))+" "+str(error.original) + "\n" + str(error_msg))
+            await ctx.bot.GetChannelByName(ctx.bot.settings.bot_log).sendBlock(str(type(error.original)) + " " + str(error.original) + "\n" + str(error_msg))
         except BaseException:
             stream = io.StringIO()
             traceback.print_tb(error.__traceback__, file=stream)
@@ -112,33 +125,31 @@ async def loop(self):
     channel = client.get_channel(test_channel)
     while running:
         await asyncio.sleep(60)
-        fb.OnLoop(self)
+        # fb.OnLoop(self)
         twitch.OnLoop(self)
+
 
 def main():
     print("Program started")
-    global client 
-    settings = Settings() 
+    global client
+    settings = Settings()
     client.settings = settings
 
     commands.Bot.GetChannelByName = GetChannelByName
+    commands.Bot.sendBlockToChannel = sendBlockToChannel
 
     running = False
 
     discord.channel.TextChannel.sendBlock = sendBlock
     commands.context.Context.sendBlock = sendBlock
     commands.context.Context.GetChannelByName = GetChannelByName
+    commands.context.Context.sendBlockToChannel = sendBlockToChannel
+    commands.context.Context.sendToChannel = sendToChannel
+
     client.add_cog(general.General())
     client.add_cog(poll.Polls())
     client.add_cog(find.Find())
-	# client.add_cog(BotCommands.stream.Twitch())
-	# client.add_cog(BotCommands.insta.Instagram())
-
-	if settings.environment == settings.prod:
-	    client.loop.create_task(loop())
-
+    client.add_cog(twitch.Twitch(client))
+    # client.add_cog(BotCommands.stream.Twitch())
+    # client.add_cog(BotCommands.insta.Instagram())
     client.run(settings.key)
-
-  
-
-

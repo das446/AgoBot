@@ -16,11 +16,10 @@ import gspread
 import os
 
 """
-This bot uses Google Sheets as a way to store user's votes 
+This bot uses Google Sheets as a way to store user's votes
 
 
 """
-
 
 
 def GetEmail(user):
@@ -144,7 +143,7 @@ class Poll():
         """Returns a poll's votes for a given option index."""
         sheet = self.GetSheet().get_worksheet(0)
         row = sheet.row_values(index + 1)
-        return row[1:] #don't send header
+        return row[1:]  # don't send header
 
     def AddOption(self, option):
         self.options.append(option)
@@ -180,7 +179,8 @@ def GetPoll(channel):
 class Polls(commands.Cog):
 
     @commands.command(
-        name="poll-new", help='Create a new poll. Format should be $poll-new channel "Poll name" "option1,option2,option3" ')
+        name="poll-new",
+        help='Create a new poll. Format should be $poll-new channel "Poll name" "option1,option2,option3" ')
     @commands.check(is_admin_channel)
     async def CreatePoll(self, ctx, channel_name, name, *options):
         """Create a new poll."""

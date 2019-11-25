@@ -18,5 +18,5 @@ class Find(commands.Cog):
                             urls.append(message.jump_url)
                 except BaseException:
                     print("Couldn't read channel " + str(channel))
-        text = "Found these messages:\n"+"\n".join(urls)
+        text = "Found these messages:\n" + "\n".join(urls)
         await msg.edit(content=text[0:2000])

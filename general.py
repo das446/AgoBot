@@ -12,7 +12,6 @@ import random
 import typing
 
 
-
 class General(commands.Cog):
 
     @commands.command(name="stop", help='Stop the bot')
@@ -58,18 +57,19 @@ class General(commands.Cog):
         await ctx.bot.change_presence(status=discord.Status.online, activity=game)
         await ctx.sendBlock("Set status to " + game_name)
 
-    @commands.command(name="boardgame",
-                      help="Help decide a boardgame to play. Type a number to list that many games, and/or a letter or word to filter by it's title.")
-    async def RandomBoardGame(self, ctx, amount: typing.Optional[int]=1, title_filter=""):
-        if amount<1:
+    @commands.command(
+        name="boardgame",
+        help="Help decide a boardgame to play. Type a number to list that many games, and/or a letter or word to filter by it's title.")
+    async def RandomBoardGame(self, ctx, amount: typing.Optional[int] = 1, title_filter=""):
+        if amount < 1:
             raise Error("Enter a positive number for amount")
         games = open(os.path.join("files", "boardgames.txt")).readlines()
-        if len(title_filter)==1:
-            games = filter(lambda g: g.startswith(title_filter),games)
-        elif len(title_filter)>1:
+        if len(title_filter) == 1:
+            games = filter(lambda g: g.startswith(title_filter), games)
+        elif len(title_filter) > 1:
             games = filter(lambda g: title_filter.lower() in g.lower(), games)
         games = list(games)
-        if len(games)==0:
+        if len(games) == 0:
             raise Error("No games found.")
         random.shuffle(games)
         chosen_games = games[:amount]

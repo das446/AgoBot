@@ -66,7 +66,6 @@ class Twitch(commands.Cog):
 
     @tasks.loop(seconds=60)
     async def Loop(self):
-        print("loop")
         await OnLoop(self.bot)
     
     @Loop.before_loop

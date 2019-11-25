@@ -19,8 +19,10 @@ import twitch
 client = commands.Bot(command_prefix='$')
 
 
-async def sendBlock(self, s):
-    return await self.send('```' + s + '```')
+async def sendBlock(self, s, mention = "" ):
+    if mention != "":
+        mention = "<@"+mention+">"
+    return await self.send(mention + '```' + s + '```')
 
 
 async def sendBlockToChannel(self, channel_name, msg):
@@ -53,10 +55,10 @@ class Settings():
         self.server = self.settings["server"]
         self.key = self.settings["key"]
         self.bot = self.settings["bot_id"]
+    
     def __getitem__(self, key):
         return self.settings[key]
-
-
+    
 @client.event
 async def on_ready():
     """Called when the bot starts."""
@@ -95,7 +97,12 @@ async def on_command_error(ctx, error):
     if type(error) == commands.errors.BadArgument:
         await ctx.sendBlock("One of your options isn't a number that needs to be.")
         return
+
     elif type(error) == commands.errors.CheckFailure:
+        return
+ 
+    elif type(error) == commands.errors.MissingRequiredArgument:
+        await ctx.sendBlock("You're missing a required value in your command")
         return
 
     try:
@@ -108,14 +115,19 @@ async def on_command_error(ctx, error):
             stream = io.StringIO()
             traceback.print_tb(error.original.__traceback__, file=stream)
             error_msg = stream.getvalue()
+            creator = ctx.bot.settings["creator"]
             await ctx.sendBlock("An error occured, please alert a server admin.")
-            await ctx.bot.GetChannelByName(ctx.bot.settings.bot_log).sendBlock(str(type(error.original)) + " " + str(error.original) + "\n" + str(error_msg))
+            msg = str(type(error.original))+" "+str(error.original) + "\n" + str(error_msg)
+            await ctx.bot.GetChannelByName(ctx.bot.settings.bot_log).sendBlock(msg, mention = ctx.bot.settings["creator"])
+        
         except BaseException:
             stream = io.StringIO()
             traceback.print_tb(error.__traceback__, file=stream)
             error_msg = stream.getvalue()
             await ctx.sendBlock("An error occured, please alert a server admin.")
-            await ctx.bot.GetChannelByName(ctx.bot.settings.bot_log).sendBlock(str(type(error)) + " " + str(error) + "\n" + str(error_msg))
+
+            msg = str(type(error))+" "+str(error) + "\n" + str(error_msg)
+            await ctx.bot.GetChannelByName(ctx.bot.settings.bot_log).sendBlock(msg, mention = ctx.bot.settings["creator"])
 
 
 async def loop(self):
@@ -138,6 +150,7 @@ def main():
     commands.Bot.GetChannelByName = GetChannelByName
     commands.Bot.sendBlockToChannel = sendBlockToChannel
 
+    commands.context.Context.sendBlock = sendBlock
     running = False
 
     discord.channel.TextChannel.sendBlock = sendBlock

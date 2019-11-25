@@ -14,6 +14,11 @@ import typing
 
 class General(commands.Cog):
 
+    @commands.command(name="test-mention")
+    @commands.check(is_admin_channel)
+    async def Mention(self, ctx):
+        await ctx.sendBlock("test",mention = ctx.bot.settings["creator"])
+
     @commands.command(name="stop", help='Stop the bot')
     @commands.check(is_admin_channel)
     async def Stop(self, ctx, *msg):

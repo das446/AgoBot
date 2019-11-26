@@ -104,6 +104,9 @@ async def on_command_error(ctx, error):
     elif type(error) == commands.errors.MissingRequiredArgument:
         await ctx.sendBlock("You're missing a required value in your command")
         return
+    
+    elif type(error) == commands.errors.CommandNotFound:
+        return
 
     try:
         if error.original.handled:

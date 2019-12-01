@@ -30,13 +30,9 @@ def SearchBoardGames(filters):
     filters = str(filters)
     if len(filter) < 2:                                #If search parameter only has 1 or fewer letter, search for games that starts with that letter
         for i in games:
-            if i.name[0].lower() == filters.lower():
+            if i.name.lower().startswith(filters.lower()):
                 print(i.name)
     else:    
         for i in games:
             if filters.lower() in i.name.lower():
                 print(i.name) 
-
-ReadGames()
-filter = input()
-SearchBoardGames(filter)

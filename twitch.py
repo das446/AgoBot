@@ -12,9 +12,9 @@ class Game:
         self.game = game
         self.status = status
         self.game_type = "Video Games"
-        if game == "Board Games":
+        if game == "Board Games":  #When streaming a board game the title should be "Game Name: Whatever you want"
             self.game_type = "Board Games"
-            self.game = self.status.split(':')[1]
+            self.game = self.status.split(':')[0]
 
     def __str__(self):
         return self.game
@@ -31,7 +31,7 @@ async def OnLoop(bot, msg_channel=""):
             channel = bot.settings["channel_boardgames"]
         if msg_channel!="":
             channel = msg_channel
-        msg = "We're streaming " + curGame.game + " " + curGame.game_type
+        msg = "We're streaming " + curGame.game
         print(msg)
         await bot.sendBlockToChannel(channel, msg)
         return curGame

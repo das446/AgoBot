@@ -10,7 +10,7 @@ from security import is_admin_channel, is_in_channel, Error
 import os
 import random
 import typing
-
+import qrcode
 
 class General(commands.Cog):
 
@@ -79,3 +79,14 @@ class General(commands.Cog):
         random.shuffle(games)
         chosen_games = games[:amount]
         await ctx.sendBlock("Try:\n" + "".join(chosen_games))
+
+    @commands.command(name = "qr", help = "Generate a qr code. Can be posted in chat or DM'ed")
+    async def MakeQr(self, ctx, text, dm="False"):
+        img = qrcode.make(text)
+        img_path = os.path.join("files","qr.png")
+        img.save(img_path,"PNG")
+        if dm != "False":
+            await ctx.author.send(text, file = discord.File(img_path))
+        else:
+            await ctx.send(text, file = discord.File(img_path))
+        

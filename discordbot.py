@@ -14,7 +14,7 @@ import io
 from security import Error, GetChannelByName
 import os
 import twitch
-
+import emoji
 
 client = commands.Bot(command_prefix='$')
 
@@ -166,6 +166,7 @@ def main():
     client.add_cog(poll.Polls())
     client.add_cog(find.Find())
     client.add_cog(twitch.Twitch(client))
+    client.add_cog(emoji.Emoji())
     # client.add_cog(BotCommands.stream.Twitch())
     # client.add_cog(BotCommands.insta.Instagram())
     client.run(settings.key)

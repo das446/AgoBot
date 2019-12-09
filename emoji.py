@@ -18,5 +18,17 @@ class Emoji(commands.Cog):
         if sys.getsizeof(b) > 256000:
             raise Error("The file must be smaller than 256 kB.")
        
-        #await guild.create_custom_emoji(name=name,image=b)
+        await guild.create_custom_emoji(name=name,image=b)
         await ctx.sendBlock("Uploaded emoji")
+    
+    commands.command(name="emoji-upload", help = "Uploads all of the emojis in a given folder")
+    commands.check(is_admin_channel)
+    async def BulkUploadEmojis(self, ctx):
+        folder = os.path.join("files","emojis")
+        guild = ctx.message.guild
+        for f in os.listdir(folder):
+            print(f)
+            image = f.read()
+            b = bytearray(image)
+            await guild.create_custom_emoji(name=f.split('.')[0],image=b)
+

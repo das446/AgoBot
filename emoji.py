@@ -3,6 +3,7 @@ from discord.ext import commands
 from security import is_admin_channel, Error
 import io 
 import sys
+import os
 
 class Emoji(commands.Cog):
     @commands.command(name="emoji-new",help= "Upload a new emoji") 
@@ -21,14 +22,20 @@ class Emoji(commands.Cog):
         await guild.create_custom_emoji(name=name,image=b)
         await ctx.sendBlock("Uploaded emoji")
     
-    commands.command(name="emoji-upload", help = "Uploads all of the emojis in a given folder")
-    commands.check(is_admin_channel)
+    @commands.command(name="emoji-upload", help = "Uploads all of the emojis in a given folder")
+    @commands.check(is_admin_channel)
     async def BulkUploadEmojis(self, ctx):
         folder = os.path.join("files","emojis")
         guild = ctx.message.guild
+        msg = ""
         for f in os.listdir(folder):
-            print(f)
-            image = f.read()
+            f = os.path.join(folder,f)
+            r = open(f,'rb')
+            image = r.read()
             b = bytearray(image)
-            await guild.create_custom_emoji(name=f.split('.')[0],image=b)
-
+            name = f.split('/')[-1].split('.')[0]
+            print(name)
+            await guild.create_custom_emoji(name=name,image=b)
+            msg = msg + "Uploaded " + name +"\n"
+            r.close()
+        await ctx.sendBlock(msg)

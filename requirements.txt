@@ -148,7 +148,6 @@ traitlets==4.3.2
 typing-extensions==3.7.4
 uritemplate==3.0.0
 urllib3==1.25.7
-usb-creator==0.3.3
 virtualenv==16.0.0
 wadllib==1.3.2
 wcwidth==0.1.7

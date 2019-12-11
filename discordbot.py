@@ -40,11 +40,12 @@ class Settings():
         self.config = configparser.ConfigParser() 
         self.prod = 'prod'
         self.dev = 'dev'
+        self.local = 'local'
         self.start_time = datetime.now() 
         self.environment = self.dev
         if len(sys.argv) > 1:
             self.environment = sys.argv[1]
-        if self.environment == "local":
+        if self.environment == self.local:
             aws = self.config.read('config')
             os.environ['AWS_ACCESS_KEY_ID']=self.config["dev"]["aws_key"]
             os.environ["AWS_SECRET_ACCESS_KEY"]=self.config["dev"]["aws_secret"]
@@ -62,6 +63,15 @@ class Settings():
     
     def __getitem__(self, key):
         return self.settings[key]
+    
+    def ReadFile(self, path, string=True):
+        if self.environment == self.local:
+            return open(os.path.join("files",path),"r").read()
+        else:
+            data = ReadFile(path)
+            if string:
+                return data.decode('ASCII')
+            return data
     
 @client.event
 async def on_ready():
@@ -87,8 +97,8 @@ async def on_message(message):
 
 @client.check
 async def restrict_to_dev(ctx):
-    """Allows a dev and production version of the bot to be running at the same time without interference"""
-    if ctx.bot.settings.environment == "dev":
+    """Allows a dev/local and production version of the bot to be running at the same time without interference"""
+    if ctx.bot.settings.environment != "prod":
         return str(ctx.channel) == "testground"
     if ctx.bot.settings.environment == "prod":
         return str(ctx.channel) != "testground"

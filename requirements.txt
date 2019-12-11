@@ -63,8 +63,6 @@ lazr.uri==1.0.3
 lockfile==0.12.2
 Mako==1.0.7
 MarkupSafe==1.1.1
-mate-hud==18.4.8
-mate-tweak==18.4.16
 matplotlib==3.0.0
 mistune==0.8.4
 mpmath==1.0.0

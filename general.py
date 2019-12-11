@@ -67,9 +67,9 @@ class General(commands.Cog):
     async def MakeQr(self, ctx, text, dm="False"):
         #TODO: Make image exist only as bytes in memory
         img = qrcode.make(text)
-        img.save("qr.png",'PNG')
+        img.save('qr.png','PNG')
         if dm != "False":
-            await ctx.author.send(text, file = discord.File("qr.png"))
+            await ctx.author.send(text, file = discord.File("qr.png")
         else:
-            await ctx.send(text, file = discord.File("qr.png"))
+            await ctx.send(text, file = discord.File("qr.png")
         

@@ -15,4 +15,4 @@ def Fix(good,bad,new):
             final.append(line.strip())
     print("\n".join(final))
 
-Fix("requirements-latest.txt", "requirements-bad.txt", "requirements.txt")
+Fix("requirements-latest.txt", "requirements-bad.txt", "requirements-new.txt")

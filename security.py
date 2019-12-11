@@ -29,7 +29,7 @@ def is_in_channel(channels):
 # self=client
 
 def ReadFile(f):
-        s3 = boto3.resource('s3',aws_access_key_id = os.environ['AWS_ACCESS_KEY_ID'],aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'])
+        s3 = boto3.client('s3',aws_access_key_id = os.environ['AWS_ACCESS_KEY_ID'],aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'])
         response = s3.get_object(Bucket='ago-discord',Key=f)
         return response['Body'].read()
 

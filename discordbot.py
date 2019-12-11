@@ -37,14 +37,18 @@ async def sendToChannel(self, channel_name, msg):
 
 class Settings():
     def __init__(self):
-        self.config = configparser.ConfigParser()
-        self.config.read_string(ReadFile('config'))
+        self.config = configparser.ConfigParser() 
         self.prod = 'prod'
         self.dev = 'dev'
-        self.start_time = datetime.now()
+        self.start_time = datetime.now() 
         self.environment = self.dev
         if len(sys.argv) > 1:
             self.environment = sys.argv[1]
+        if self.environment == "local":
+            aws = self.config.read('config')
+            os.environ['AWS_ACCESS_KEY_ID']=self.config["dev"]["aws_key"]
+            os.environ["AWS_SECRET_ACCESS_KEY"]=self.config["dev"]["aws_secret"]
+        self.config.read_string(ReadFile('config').decode('ASCII'))
 
         self.settings = self.config[self.environment]
 

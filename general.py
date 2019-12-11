@@ -65,13 +65,11 @@ class General(commands.Cog):
 
     @commands.command(name = "qr", help = "Generate a qr code. Can be posted in chat or DM'ed")
     async def MakeQr(self, ctx, text, dm="False"):
+        #TODO: Make image exist only as bytes in memory
         img = qrcode.make(text)
-        print(type(img))
-        b = io.BytesIO()
-        img.save(b,'PNG')
-        print(sys.getsizeof(b)) 
+        img.save("qr.png",'PNG')
         if dm != "False":
-            await ctx.author.send(text, file = discord.File(b))
+            await ctx.author.send(text, file = discord.File("qr.png"))
         else:
-            await ctx.send(text, file = discord.File(b))
+            await ctx.send(text, file = discord.File("qr.png"))
         

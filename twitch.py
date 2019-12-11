@@ -21,11 +21,12 @@ class Game:
 
 
 async def OnLoop(bot, msg_channel=""):
-    fileName = os.path.join("files", "streams.txt")
-    curGame = GetCurrentGame()
-    prevGame = GetMostRecentGame(fileName).strip()
-    if prevGame != curGame.game:
-        open(fileName, "a+").write(curGame.game.strip() + "\n")
+    curGame = GetCurrentGame(bot.settings)
+    prevGame = GetMostRecentGame(bot.settings)
+    if prevGame != curGame.game:    
+        lines = bot.settings.ReadFile("streams.txt").split("\n")
+        lines.append(curGame.game.strip())
+        bot.settings.WriteFile("streams.txt", "\n".join(lines))
         channel = bot.settings["channel_videogames"]
         if curGame.game_type == "Board Games":
             channel = bot.settings["channel_boardgames"]
@@ -35,19 +36,19 @@ async def OnLoop(bot, msg_channel=""):
         print(msg)
         await bot.sendBlockToChannel(channel, msg)
         return curGame
-    return None
+    return curGame
 
 
-def GetMostRecentGame(f):
-    lines = open(f, "r").readlines()
+def GetMostRecentGame(settings):
+    lines = settings.ReadFile("streams.txt").split("\n")
     if len(lines) > 1:
         return lines[-1].strip()
     return ""
 
 
-def GetCurrentGame():
-    channel = open(os.path.join("files", "twitch-id.txt")).read().strip()
-    key = open(os.path.join("files", "twitch-key.txt")).read().strip()
+def GetCurrentGame(settings):
+    channel = settings["twitch_id"]
+    key = settings["twitch_key"]
     url = "https://api.twitch.tv/kraken/channels/" + channel
     headers = {
         'Accept': 'application/vnd.twitchtv.v5+json',
@@ -76,13 +77,14 @@ class Twitch(commands.Cog):
         name = "stream",
         help = "Show info about the current stream")
     async def StreamInfo(self, ctx):
-        game = await OnLoop(ctx.bot,msg)
-            
+        game = GetCurrentGame(ctx.bot.settings)
+        await ctx.sendBlock("We're streaming "+str(game))    
+    
     @commands.command(
         name="streams",
         help="Show a list of all the games we've streamed. (Since we started tracking them)")
     async def GameList(self, ctx):
         msg = "Here's the games we've played:\n"
-        fileName = os.path.join("files", "streams.txt")
-        games = open(fileName, "r").readlines()
-        await ctx.sendBlock(msg+"\n".join(games))
+        games = ctx.settings.ReadFile("streams.txt")
+        print(games)
+        await ctx.sendBlock(msg+games)

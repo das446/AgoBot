@@ -11,7 +11,7 @@ import poll
 import find
 import traceback
 import io
-from security import Error, GetChannelByName, ReadFile
+from security import Error, GetChannelByName, ReadFile, WriteFile
 import os
 import twitch
 
@@ -72,6 +72,12 @@ class Settings():
             if string:
                 return data.decode('ASCII')
             return data
+    
+    def WriteFile(self, path, data):
+        if self.environment == "local":
+            open(os.path.join(files,path),"w+").write(data)
+        else:
+            WriteFile(path, data)
     
 @client.event
 async def on_ready():

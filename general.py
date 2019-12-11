@@ -69,7 +69,7 @@ class General(commands.Cog):
         img = qrcode.make(text)
         img.save('qr.png','PNG')
         if dm != "False":
-            await ctx.author.send(text, file = discord.File("qr.png")
+            await ctx.author.send(text, file = discord.File("qr.png"))
         else:
-            await ctx.send(text, file = discord.File("qr.png")
+            await ctx.send(text, file = discord.File("qr.png"))
         

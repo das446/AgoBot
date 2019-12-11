@@ -14,7 +14,6 @@ cairocffi==0.9.0
 certifi==2019.9.11
 cffi==1.11.5
 chardet==3.0.4
-command-not-found==0.3
 coverage==4.5.4
 cryptography==2.1.4
 cupshelpers==1.0

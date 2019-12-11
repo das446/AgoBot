@@ -1,4 +1,6 @@
 from discord.ext import commands
+import os
+import boto3
 
 dev = False
 
@@ -26,6 +28,10 @@ def is_in_channel(channels):
 
 # self=client
 
+def ReadFile(f,env="dev"):
+        s3 = boto3.resource('s3',aws_access_key_id = os.environ['AWS_ACCESS_KEY_ID'],aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'])
+        response = s3.get_object(Bucket='ago-discord',Key=f)
+        return response['Body'].read()
 
 def GetChannelByName(self, channel_name):
     channels = self.get_all_channels()

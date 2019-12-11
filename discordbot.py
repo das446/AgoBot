@@ -11,7 +11,7 @@ import poll
 import find
 import traceback
 import io
-from security import Error, GetChannelByName
+from security import Error, GetChannelByName, ReadFile
 import os
 import twitch
 
@@ -38,7 +38,7 @@ async def sendToChannel(self, channel_name, msg):
 class Settings():
     def __init__(self):
         self.config = configparser.ConfigParser()
-        self.config.read('config')
+        self.config.read_string(ReadFile('config'))
         self.prod = 'prod'
         self.dev = 'dev'
         self.start_time = datetime.now()

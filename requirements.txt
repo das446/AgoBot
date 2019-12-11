@@ -25,7 +25,6 @@ docutils==0.15.2
 entrypoints==0.2.3
 facebook-sdk==3.1.0
 ggplot==0.11.5
-git+https://github.com/Rapptz/discord.py@rewrite
 google-api-core==1.12.0
 google-api-python-client==1.7.11
 google-auth==1.6.3

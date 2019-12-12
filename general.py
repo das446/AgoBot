@@ -60,7 +60,7 @@ class General(commands.Cog):
     async def ShowSchedule(self, ctx):
         """Shows the weekly schedule by reading files/schedule.txt"""
         schedule = ctx.bot.settings.ReadFile('schedule.txt')
-        await ctx.sendBlock(schedule.read())
+        await ctx.sendBlock(schedule)
 
     @commands.command(name="playing", help="Set the bot's activity status")
     @commands.check(is_admin_channel)

@@ -49,8 +49,8 @@ class General(commands.Cog):
     @commands.command(name='info', help='Show info about the bot')
     async def Info(self, ctx):
         """Shows info about the bot by reading files/info.txt"""
-        info = ctx.settings.ReadFile('info.txt')
-        message = info.read()
+        info = ctx.bot.settings.ReadFile('info.txt')
+        message = info
         now = datetime.now()
         uptime = now - ctx.bot.settings.start_time
         message = message + "Current Uptime: " + str(uptime)
@@ -59,7 +59,7 @@ class General(commands.Cog):
     @commands.command(name='schedule', help='Show weekly schedule')
     async def ShowSchedule(self, ctx):
         """Shows the weekly schedule by reading files/schedule.txt"""
-        schedule = ctx.settings.ReadFile('schedule.txt')
+        schedule = ctx.bot.settings.ReadFile('schedule.txt')
         await ctx.sendBlock(schedule.read())
 
     @commands.command(name="playing", help="Set the bot's activity status")

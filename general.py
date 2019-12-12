@@ -21,6 +21,11 @@ class General(commands.Cog):
     async def Where(self, ctx):
         await ctx.sendBlock(str(socket.gethostname()))
 
+    @commands.command(name="env")
+    @commands.check(is_admin_channel)
+    async def Env(self, ctx):
+        await ctx.sendBlock(ctx.bot.settings.environment)
+
     @commands.command(name="stop", help='Stop the bot')
     @commands.check(is_admin_channel)
     async def Stop(self, ctx, *msg):

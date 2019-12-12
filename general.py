@@ -12,13 +12,14 @@ import random
 import typing
 import qrcode
 import io
+import socket
 
 class General(commands.Cog):
 
-    @commands.command(name="test-mention")
+    @commands.command(name="where")
     @commands.check(is_admin_channel)
-    async def Mention(self, ctx):
-        await ctx.sendBlock("test",mention = ctx.bot.settings["creator"])
+    async def Where(self, ctx):
+        await ctx.sendBlock(str(socket.gethostname()))
 
     @commands.command(name="stop", help='Stop the bot')
     @commands.check(is_admin_channel)

@@ -99,7 +99,7 @@ class Poll():
         return "https://docs.google.com/spreadsheets/d/%s" % self.id
 
     def SaveToFile(self):
-        data = 
+        data = (
             self.name +
             "," +
             self.id +
@@ -109,6 +109,7 @@ class Poll():
             str(self.maxVotesPerPerson) +
             "," +
             ",".join(self.options)
+        )
         self.settings.WriteFile("polls/"+self.channel+".csv", data) 
 
     def AddVote(self, choice, user):

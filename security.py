@@ -33,9 +33,9 @@ def ReadFile(f):
         response = s3.get_object(Bucket='ago-discord',Key=f)
         return response['Body'].read()
 
-def WriteFile(data,dest):
+def WriteFile(dest, data):
         s3 = boto3.client('s3',aws_access_key_id = os.environ['AWS_ACCESS_KEY_ID'],aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'])
-        response = s3.put_object(Bucket='ago-discord',Key=dest, Body=bytes(data))
+        response = s3.put_object(Bucket='ago-discord',Key=dest, Body=data)
 
 def GetChannelByName(self, channel_name):
     channels = self.get_all_channels()

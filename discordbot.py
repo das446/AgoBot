@@ -45,7 +45,7 @@ class Settings():
         self.environment = self.dev
         if len(sys.argv) > 1:
             self.environment = sys.argv[1]
-        if self.environment == self.local:
+        if self.environment == self.local or self.environment == "tux":
             aws = self.config.read('config')
             os.environ['AWS_ACCESS_KEY_ID']=self.config["dev"]["aws_key"]
             os.environ["AWS_SECRET_ACCESS_KEY"]=self.config["dev"]["aws_secret"]
@@ -95,9 +95,10 @@ async def on_message(message):
             client.settings.admin_channel) and len(message.attachments) > 0:
         attachment = message.attachments[0]
         filename = attachment.filename
-        if filename.endswith('.txt') or filename.endswith('csv'):
-            await attachment.save(os.path.join("files", filename))
-            await message.channel.sendBlock("Updated file " + filename)
+        b = io.BytesIO()
+        await attachment.save(b)
+        client.settings.WriteFile(filename, b.getvalue().decode())
+        await message.channel.sendBlock("Updated file " + filename)
     await client.process_commands(message)
 
 

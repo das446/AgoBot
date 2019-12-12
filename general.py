@@ -23,7 +23,7 @@ class General(commands.Cog):
     @commands.command(name="stop", help='Stop the bot')
     @commands.check(is_admin_channel)
     async def Stop(self, ctx, *msg):
-        """Stops the bot,"""
+        """Stops the bot"""
         channel = ctx.bot.get_channel(ctx.bot.settings.main_channel)
         if len(msg) > 0:
             await channel.sendBlock('AGO Bot will be down for maintenance')
@@ -67,9 +67,10 @@ class General(commands.Cog):
     async def MakeQr(self, ctx, text, dm="False"):
         #TODO: Make image exist only as bytes in memory
         img = qrcode.make(text)
-        img.save('qr.png','PNG')
+        filename = 'qr'+str(random.randint(1,10000000))+'.png'
+        img.save(filename,'PNG')
         if dm != "False":
-            await ctx.author.send(text, file = discord.File("qr.png"))
+            await ctx.author.send(text, file = discord.File(filename))
         else:
-            await ctx.send(text, file = discord.File("qr.png"))
-        
+            await ctx.send(text, file = discord.File(filename))
+        os.remove(filename)

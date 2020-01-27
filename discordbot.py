@@ -19,7 +19,7 @@ import twitch
 client = commands.Bot(command_prefix='$')
 
 
-async def sendBlock(self, s, mention = "" ):
+async def sendBlock(self, s, mention=""):
     if mention != "":
         mention = "<@"+mention+">"
     return await self.send(mention + '```' + s + '```')

@@ -41,10 +41,9 @@ async def OnLoop(bot, msg_channel=""):
 
 def GetMostRecentGame(settings):
     lines = settings.ReadFile("streams.txt").split("\n")
-    if len(lines) > 1:
-        return lines[-1].strip()
-    return ""
-
+    if len(lines) == 0:
+        return ""
+    return lines[-1]
 
 def GetCurrentGame(settings):
     channel = settings["twitch_id"]
@@ -63,28 +62,28 @@ def GetCurrentGame(settings):
 class Twitch(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.Loop.start()
+        #self.Loop.start()
 
-    @tasks.loop(seconds=300)
-    async def Loop(self):
-        await OnLoop(self.bot)
-    
-    @Loop.before_loop
-    async def pre_loop(self):
-        await self.bot.wait_until_ready()
+#    @tasks.loop(seconds=300)
+#    async def Loop(self):
+#        await OnLoop(self.bot)
+#    
+#    @Loop.before_loop
+#    async def pre_loop(self):
+#        await self.bot.wait_until_ready()
 
     @commands.command(
         name = "stream",
         help = "Show info about the current stream")
-    async def StreamInfo(self, ctx):
+    async def StreamInfo(self, ctx, amnt=1):
         game = GetCurrentGame(ctx.bot.settings)
         await ctx.sendBlock("We're streaming "+str(game))    
     
     @commands.command(
         name="streams",
         help="Show a list of all the games we've streamed. (Since we started tracking them)")
-    async def GameList(self, ctx):
-        msg = "Here's the games we've played:\n"
-        games = ctx.settings.ReadFile("streams.txt")
-        print(games)
-        await ctx.sendBlock(msg+games)
+    async def GameList(self, ctx, amnt=10) :
+        msg = "Here's the past games we've played:\n"
+        games = ctx.bot.settings.ReadFile("streams.txt")
+        games = games.splitlines()[-1:-amnt:-1]
+        await ctx.sendBlock(msg+'\n'.join(games))

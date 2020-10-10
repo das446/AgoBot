@@ -33,9 +33,9 @@ class Event:
 		embed.set_footer(text=self.time)
 		return embed
 
-def GetFbLogin():
-	if self.environment == "prod":
-		aws = self.config.read('config')
+def GetFbLogin(settings):
+	if settings.environment == "prod":
+		aws = settings.config.read('config')
 		user = os.environ['FB_USER']
 		pw = os.environ["FB_PW"]
 		return user, pw

@@ -50,8 +50,9 @@ def GetEvents(settings):
 	
 	driver = ""
 	if settings.environment=="prod":
-		GOOGLE_CHROME_PATH = '/app/.apt/usr/bin/google-chrome'
 		CHROMEDRIVER_PATH = '/app/.chromedriver/bin/chromedriver'
+		GOOGLE_CHROME_PATH = '/app/.apt/usr/bin/google-chrome'
+		
 		
 		chrome_options = webdriver.ChromeOptions()
 		chrome_options.add_argument('--headless')

@@ -33,11 +33,33 @@ class Event:
 		embed.set_footer(text=self.time)
 		return embed
 
-def GetEvents():
-	usr='nintendavid26@aol.com'
-	pwd='##sk34syyz'
+def GetFbLogin():
+	if self.environment == "prod":
+		aws = self.config.read('config')
+		user = os.environ['FB_USER']
+		pw = os.environ["FB_PW"]
+		return user, pw
+	
+	else:
+		return input("Enter Email"), input("Enter Password")
+
+
+def GetEvents(settings):
+	user, pw = GetFbLogin(settings)
 	
 	driver = webdriver.Chrome(ChromeDriverManager().install())
+	
+	if settings.environment=="prod":
+		GOOGLE_CHROME_PATH = '/app/.apt/usr/bin/google_chrome'
+		CHROMEDRIVER_PATH = '/app/.chromedriver/bin/chromedriver'
+		
+		chrome_options = webdriver.ChromeOptions()
+		chrome_options.add_argument('--disable-gpu')
+		chrome_options.add_argument('--no-sandbox')
+		chrome_options.binary_location = GOOGLE_CHROME_PATH
+		
+		driver = webdriver.Chrome(execution_path=CHROMEDRIVER_PATH, chrome_options=chrome_options)
+		
 	driver.get('https://www.facebook.com/groups/DrexelAGO/events')
 	print ("Opened facebook")
 	sleep(1)
@@ -114,7 +136,7 @@ class FaceBook(commands.Cog):
 	@commands.command(name='events', help='Show upcoming events.', pass_context=True)
 	async def ShowEvents(self, ctx):
 		async with ctx.typing():
-			events = GetEvents()
+			events = GetEvents(self.bot.settings)
 			
 			for event in events:
 				embed = event.ToEmbed()

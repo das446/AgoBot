@@ -45,20 +45,20 @@ def GetFbLogin(settings):
 
 
 def GetEvents(settings):
-	user, pw = GetFbLogin(settings)
+	usr, pwd = GetFbLogin(settings)
 	
 	
 	driver = ""
 	if settings.environment=="prod":
 		CHROMEDRIVER_PATH = '/app/.chromedriver/bin/chromedriver'
-		GOOGLE_CHROME_PATH = '/app/.apt/usr/bin/google-chrome'
+		GOOGLE_CHROME_BIN = '/app/.apt/usr/bin/google-chrome'
 		
 		
 		chrome_options = webdriver.ChromeOptions()
 		chrome_options.add_argument('--headless')
 		chrome_options.add_argument('--disable-gpu')
 		chrome_options.add_argument('--no-sandbox')
-		chrome_options.binary_location = GOOGLE_CHROME_PATH
+		chrome_options.binary_location = GOOGLE_CHROME_BIN
 		
 		driver = webdriver.Chrome(executable_path=CHROMEDRIVER_PATH, chrome_options=chrome_options)
 	

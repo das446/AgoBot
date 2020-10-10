@@ -35,17 +35,6 @@ class General(commands.Cog):
             await channel.sendBlock('AGO Bot will be down for maintenance')
         await ctx.bot.logout()
 
-    @commands.command(name='events', help='Show upcoming events.')
-    async def ShowEvents(self, ctx):
-        """Shows upcoming events by reading files/events.txt"""
-        with open(os.path.join('files', 'events.txt'), newline='') as csvfile:
-            reader = csv.reader(csvfile, delimiter='|')
-            msg = ""
-            for row in reader:
-                msg = msg + ", ".join(row) + "\n\n"
-            msg = 'Here are upcoming events:\n' + msg
-            await ctx.sendBlock(msg)
-
     @commands.command(name='info', help='Show info about the bot')
     async def Info(self, ctx):
         """Shows info about the bot by reading files/info.txt"""

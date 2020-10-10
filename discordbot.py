@@ -14,6 +14,7 @@ import io
 from security import Error, GetChannelByName, ReadFile, WriteFile
 import os
 import twitch
+import fb
 
 
 client = commands.Bot(command_prefix='$')
@@ -184,6 +185,7 @@ def main():
     commands.context.Context.sendToChannel = sendToChannel
 
     client.add_cog(general.General())
+    client.add_cog(fb.FaceBook(client))
     client.add_cog(poll.Polls())
     client.add_cog(find.Find())
     client.add_cog(twitch.Twitch(client))

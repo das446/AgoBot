@@ -58,6 +58,7 @@ def GetEvents(settings):
 		chrome_options.add_argument('--headless')
 		chrome_options.add_argument('--disable-gpu')
 		chrome_options.add_argument('--no-sandbox')
+		chrome_options.add_argument('--disable-dev-shm-usage')
 		chrome_options.binary_location = GOOGLE_CHROME_BIN
 		
 		driver = webdriver.Chrome(executable_path=CHROMEDRIVER_PATH, chrome_options=chrome_options)
@@ -80,7 +81,7 @@ def GetEvents(settings):
 	
 	login_box = driver.find_element_by_id('loginbutton')
 	login_box.click()
-	sleep(3)
+	sleep(10)
 
 	#new events only
 	newEvents = driver.find_element_by_xpath("//div[@class='dati1w0a ihqw7lf3 hv4rvrfc discj3wi']")

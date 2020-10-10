@@ -47,8 +47,8 @@ def GetFbLogin(settings):
 def GetEvents(settings):
 	user, pw = GetFbLogin(settings)
 	
-	driver = webdriver.Chrome(ChromeDriverManager().install())
 	
+	driver = ""
 	if settings.environment=="prod":
 		GOOGLE_CHROME_PATH = '/app/.apt/usr/bin/google_chrome'
 		CHROMEDRIVER_PATH = '/app/.chromedriver/bin/chromedriver'
@@ -59,6 +59,9 @@ def GetEvents(settings):
 		chrome_options.binary_location = GOOGLE_CHROME_PATH
 		
 		driver = webdriver.Chrome(execution_path=CHROMEDRIVER_PATH, chrome_options=chrome_options)
+	
+	else:
+		driver = webdriver.Chrome(ChromeDriverManager().install())
 		
 	driver.get('https://www.facebook.com/groups/DrexelAGO/events')
 	print ("Opened facebook")

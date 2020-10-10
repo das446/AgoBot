@@ -50,10 +50,11 @@ def GetEvents(settings):
 	
 	driver = ""
 	if settings.environment=="prod":
-		GOOGLE_CHROME_PATH = '/app/.apt/usr/bin/google_chrome'
+		GOOGLE_CHROME_PATH = '/app/.apt/usr/bin/google-chrome'
 		CHROMEDRIVER_PATH = '/app/.chromedriver/bin/chromedriver'
 		
 		chrome_options = webdriver.ChromeOptions()
+		chrome_options.add_argument('--headless')
 		chrome_options.add_argument('--disable-gpu')
 		chrome_options.add_argument('--no-sandbox')
 		chrome_options.binary_location = GOOGLE_CHROME_PATH

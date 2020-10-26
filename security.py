@@ -14,6 +14,11 @@ class Error(Exception):
     def __init__(self, message):
         self.message = message
         self.handled = True
+		
+    def __init__(self, message, file):
+        self.message = message
+        self.handled = True
+        self.file = file
 
 
 async def is_admin_channel(ctx):

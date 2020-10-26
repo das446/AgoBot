@@ -20,10 +20,10 @@ import fb
 client = commands.Bot(command_prefix='$')
 
 
-async def sendBlock(self, s, mention=""):
+async def sendBlock(self, s, mention="", file = None):
     if mention != "":
         mention = "<@"+mention+">"
-    return await self.send(mention + '```' + s + '```')
+    return await self.send(mention + '```' + s + '```', file = file)
 
 
 async def sendBlockToChannel(self, channel_name, msg):
@@ -115,7 +115,7 @@ async def restrict_to_dev(ctx):
 @client.event
 async def on_command_error(ctx, error):
     """Displays a friendly error message to the user, and a detailed error message to mods if needed"""
-
+	
     if type(error) == commands.errors.BadArgument:
         await ctx.sendBlock("One of your options isn't a number that needs to be.")
         return
@@ -132,7 +132,11 @@ async def on_command_error(ctx, error):
 
     try:
         if error.original.handled:
-            await ctx.sendBlock(str(error.original))
+            if error.original.file is not None:
+                await ctx.sendBlock(str(error.original))
+                await ctx.bot.GetChannelByName(ctx.bot.settings.bot_log).sendBlock(msg, mention = ctx.bot.settings["creator"],file=error.original.file)
+            else:
+                await ctx.sendBlock(str(error.original))
         else:
             await ctx.sendBlock("An unexpected error occured")
     except BaseException:

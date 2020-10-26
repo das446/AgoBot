@@ -135,6 +135,7 @@ async def on_command_error(ctx, error):
             if error.original.file is not None:
                 await ctx.sendBlock(str(error.original))
                 await ctx.bot.GetChannelByName(ctx.bot.settings.bot_log).sendBlock(msg, mention = ctx.bot.settings["creator"],file=error.original.file)
+                await ctx.bot.GetChannelByName(ctx.bot.settings.bot_log).sendBlock(str(error.original.file), mention = ctx.bot.settings["creator"])
             else:
                 await ctx.sendBlock(str(error.original))
         else:

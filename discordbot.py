@@ -148,7 +148,7 @@ async def on_command_error(ctx, error):
             creator = ctx.bot.settings["creator"]
             await ctx.sendBlock("An error occured, please alert a server admin.")
             msg = str(type(error.original))+" "+str(error.original) + "\n" + str(error_msg)
-            await ctx.bot.GetChannelByName(ctx.bot.settings.bot_log).sendBlock(msg, mention = ctx.bot.settings["creator"])
+            await ctx.bot.GetChannelByName(ctx.bot.settings.bot_log).sendBlock(msg, mention = ctx.bot.settings["creator"],file=error.original.file)
         
         except BaseException:
             stream = io.StringIO()
@@ -157,7 +157,7 @@ async def on_command_error(ctx, error):
             await ctx.sendBlock("An error occured, please alert a server admin.")
 
             msg = str(type(error))+" "+str(error) + "\n" + str(error_msg)
-            await ctx.bot.GetChannelByName(ctx.bot.settings.bot_log).sendBlock(msg, mention = ctx.bot.settings["creator"])
+            await ctx.bot.GetChannelByName(ctx.bot.settings.bot_log).sendBlock(msg, mention = ctx.bot.settings["creator"],file=error.original.file)
 
 
 async def loop(self):

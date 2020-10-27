@@ -88,9 +88,13 @@ def GetEvents(settings):
 
 		#new events only
 		
-		dates = driver.find_elements_by_class_name('fbCalendarList')
+		tag = "fbCalendarList"
 		
-		events = driver.find_elements_by_class_name('fbCalendarItemContent')
+		dates = driver.find_elements_by_class_name(tag)
+		
+		tag = "fbCalendarItemContent"
+		
+		events = driver.find_elements_by_class_name(tag)
 		
 		eventObjects = []
 		
@@ -105,10 +109,10 @@ def GetEvents(settings):
 			url = "https://www.facebook.com" + str(a.get_attribute('href'))
 			
 			bg = a.find_element_by_xpath("//img").get_attribute("src")
+			
+			tag = "uiHeaderTitle"
 
-			d = str(date.find_element_by_class_name('uiHeaderTitle').get_attribute('innerHTML'))
-
-			a = event.find_element_by_class_name('r8blr3vg').find_element_by_tag_name('a')
+			d = str(date.find_element_by_class_name(tag).get_attribute('innerHTML'))
 
 			title = a.find_element_by_xpath("//img").get_attribute('aria-label')
 			
@@ -121,7 +125,7 @@ def GetEvents(settings):
 		f.close()
 		
 		file = discord.File("error.html", filename="error.html")
-		raise Error("Couldn't find element on page", file=file)
+		raise Error("Couldn't find element " + tag + " on page", file=file)
 	
 	driver.quit()
 	return eventObjects

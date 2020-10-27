@@ -102,19 +102,19 @@ def GetEvents(settings):
 
 		for event, date in zip(events, dates):
 		
-			e = event.find_element_by_xpath("//div")
+			e = event.find_element_by_css_selector("div")
 			
-			a = e.find_element_by_xpath("//a")
+			a = e.find_element_by_css_selector("a")
 			
-			url = "https://www.facebook.com/" + str(a.get_attribute('href'))
+			url = str(a.get_attribute('href'))
 			
-			bg = a.find_element_by_xpath("//img").get_attribute("src")
+			bg = a.find_element_by_css_selector("img").get_attribute("src")
 			
 			tag = "uiHeaderTitle"
 
 			d = str(date.find_element_by_class_name(tag).get_attribute('innerHTML'))
 
-			title = a.find_element_by_xpath("//img").get_attribute('aria-label')
+			title = a.find_element_by_css_selector("//img").get_attribute('aria-label')
 			
 			eventObject = Event(name = str(title), time = str(d), imgurl = str(bg), url = str(url))
 			eventObjects.append(eventObject)
@@ -156,5 +156,8 @@ class FaceBook(commands.Cog):
 			
 			for event in events:
 				embed = event.ToEmbed()
-				await ctx.send(embed=embed)
+				try:
+					await ctx.send(embed=embed)
+				except discord.errors.HTTPException:
+					raise Error("bad url "+event.url)
 		

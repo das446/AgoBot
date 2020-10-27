@@ -126,8 +126,8 @@ def GetEvents(settings):
 		
 		file = discord.File("error.html", filename="error.html")
 		raise Error("Couldn't find element " + tag + " on page", file=file)
-	
-	driver.quit()
+	finally:
+		driver.quit()
 	return eventObjects
 
 

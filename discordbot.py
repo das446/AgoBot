@@ -20,10 +20,10 @@ import fb
 client = commands.Bot(command_prefix='$')
 
 
-async def sendBlock(self, s, mention="", file = None):
+async def sendBlock(self, s, mention=""):
     if mention != "":
         mention = "<@"+mention+">"
-    return await self.send(mention + '```' + s + '```', file = file)
+    return await self.send(mention + '```' + s + '```')
 
 
 async def sendBlockToChannel(self, channel_name, msg):
@@ -148,7 +148,7 @@ async def on_command_error(ctx, error):
             creator = ctx.bot.settings["creator"]
             await ctx.sendBlock("An error occured, please alert a server admin.")
             msg = str(type(error.original))+" "+str(error.original) + "\n" + str(error_msg)
-            await ctx.bot.GetChannelByName(ctx.bot.settings.bot_log).sendBlock(msg, mention = ctx.bot.settings["creator"],file=error.original.file)
+            await ctx.bot.GetChannelByName(ctx.bot.settings.bot_log).sendBlock(msg, mention = ctx.bot.settings["creator"])
         
         except BaseException:
             stream = io.StringIO()
@@ -157,7 +157,7 @@ async def on_command_error(ctx, error):
             await ctx.sendBlock("An error occured, please alert a server admin.")
 
             msg = str(type(error))+" "+str(error) + "\n" + str(error_msg)
-            await ctx.bot.GetChannelByName(ctx.bot.settings.bot_log).sendBlock(msg, mention = ctx.bot.settings["creator"],file=error.original.file)
+            await ctx.bot.GetChannelByName(ctx.bot.settings.bot_log).sendBlock(msg, mention = ctx.bot.settings["creator"])
 
 
 async def loop(self):

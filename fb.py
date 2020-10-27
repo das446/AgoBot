@@ -106,7 +106,7 @@ def GetEvents(settings):
 			
 			a = e.find_element_by_xpath("//a")
 			
-			url = "https://www.facebook.com" + str(a.get_attribute('href'))
+			url = "https://www.facebook.com/" + str(a.get_attribute('href'))
 			
 			bg = a.find_element_by_xpath("//img").get_attribute("src")
 			

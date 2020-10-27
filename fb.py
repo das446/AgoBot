@@ -66,6 +66,7 @@ def GetEvents(settings):
 	else:
 		driver = webdriver.Chrome(ChromeDriverManager().install())
 		
+	tag = ''
 	try:
 		
 		driver.get('https://www.facebook.com/groups/DrexelAGO/events')
@@ -86,39 +87,32 @@ def GetEvents(settings):
 		sleep(10)
 
 		#new events only
-		newEvents = driver.find_element_by_xpath("//div[@class='dati1w0a ihqw7lf3 hv4rvrfc discj3wi']")
-
-		events = newEvents.find_elements_by_class_name('n1l5q3vz')
+		
+		dates = driver.find_elements_by_class_name('fbCalendarList')
+		
+		events = driver.find_elements_by_class_name('fbCalendarItemContent')
 		
 		eventObjects = []
 		
 
 
-		for event in events:
+		for event, date in zip(events, dates):
+		
+			e = event.find_element_by_xpath("//div")
+			
+			a = e.find_element_by_xpath("//a")
+			
+			url = "https://www.facebook.com" + str(a.get_attribute('href'))
+			
+			bg = a.find_element_by_xpath("//img").get_attribute("src")
 
-			innerHtml = event.get_attribute('innerHTML')
-
-			bg = event.find_element_by_class_name('r4lidvzm')
-
-			bg = bg.get_attribute('style').split('"')[1]
-
-			print(bg)
-
-			date = event.find_element_by_class_name('jdix4yx3').get_attribute('innerHTML')
-
-			print(date)
+			d = str(date.find_element_by_class_name('uiHeaderTitle').get_attribute('innerHTML'))
 
 			a = event.find_element_by_class_name('r8blr3vg').find_element_by_tag_name('a')
 
-			title = a.get_attribute('aria-label')
-
-			print(title)
-
-			url = a.get_attribute('href')
-
-			print(url)
+			title = a.find_element_by_xpath("//img").get_attribute('aria-label')
 			
-			eventObject = Event(name = str(title), time = str(date), imgurl = str(bg), url = str(url))
+			eventObject = Event(name = str(title), time = str(d), imgurl = str(bg), url = str(url))
 			eventObjects.append(eventObject)
 			
 	except:

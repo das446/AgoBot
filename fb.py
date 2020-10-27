@@ -114,7 +114,7 @@ def GetEvents(settings):
 
 			d = str(date.find_element_by_class_name(tag).get_attribute('innerHTML'))
 
-			title = a.find_element_by_css_selector("//img").get_attribute('aria-label')
+			title = a.find_element_by_css_selector("img").get_attribute('aria-label')
 			
 			eventObject = Event(name = str(title), time = str(d), imgurl = str(bg), url = str(url))
 			eventObjects.append(eventObject)

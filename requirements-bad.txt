@@ -1,4 +1,4 @@
-aiohttp==3.5.4
+aiohttp==3.7.4
 alabaster==0.7.12
 apturl==0.5.2
 asgiref==3.2.3
